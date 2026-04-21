@@ -1,0 +1,14 @@
+{
+  "code-runner.executorMap": {
+    "javascript": "node",
+    "typescript": "npx ts-node --transpile-only --files"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "eslint.validate": ["typescript"],
+  "eslint.useFlatConfig": true,
+  "prettier.requireConfig": true
+}

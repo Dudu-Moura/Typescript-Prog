@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "dev": "ts-node --transpile-only exercises_oop.ts",
+    "run:oop": "ts-node --transpile-only exercises_oop.ts",
+    "run:interfaces": "ts-node --transpile-only exercises_oop_interfaces.ts",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
