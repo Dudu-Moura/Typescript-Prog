@@ -20,7 +20,7 @@
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"],
-  "ts-node": {
+  "tsx": {
     "transpileOnly": false,
     "files": true
   }

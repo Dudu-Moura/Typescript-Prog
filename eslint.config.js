@@ -21,7 +21,7 @@ module.exports = [
     },
     rules: {
       // TypeScript recommended rules (manually expanded for flat config compatibility)
-      ...tsPlugin.configs['recommended'],
+      ...tsPlugin.configs['recommended'].rules,
 
       // Prettier integration — formats as ESLint errors
       'prettier/prettier': 'error',

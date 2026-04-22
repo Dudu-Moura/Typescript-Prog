@@ -119,6 +119,8 @@
     especialmente nos parâmetros de criação de aula e aluno
 */
 
+import { group } from "node:console";
+
 // Escreva seu código abaixo desta linha
 
 interface Repositorio<T extends { id: number }>{
@@ -126,7 +128,7 @@ interface Repositorio<T extends { id: number }>{
    buscarPorId(id: number): T | undefined
    remover(id: number): boolean,
    listarTodos(): T[],
-   gerarId(item: T): T
+   gerarId(): number
 }
 class RepositorioMemoria<T extends { id: number }> implements Repositorio<T>{
    private dados: T[] = [];
@@ -163,14 +165,9 @@ class RepositorioMemoria<T extends { id: number }> implements Repositorio<T>{
       return [...this.dados];
    }
 
-   gerarId(item: T): T{
-      if('id' in item){
-         this.proximoId++;
-         item.id = this.proximoId;
-         return item;
+   gerarId(): number{
+        return this.proximoId++;
       }
-      throw new Error('Impossível gerar Id, dado inválido');
-   }
 }
 
 interface Aluno{
@@ -190,7 +187,7 @@ interface Instrutor{
 
 type StatusAula = 'agendada' | 'em_andamento' | 'concluida' | 'cancelada';
 
-interface Aulas{
+interface Aula{
    id: number,
    modalidade: Modalidade,
    instrutor: Instrutor,
@@ -206,10 +203,10 @@ interface Modalidade{
    categoria: 'cardio' | 'força' | 'flexibilidade'
 }
 
-interface inscricao{
+interface Inscricao{
    id: number,
    aluno: Aluno,
-   aula: Aulas,
+   aula: Aula,
    dataFeita: Date,
    status: 'ativa' | 'cancelada'
 }
@@ -218,7 +215,159 @@ type resultadoOperacao<T> =
    | {sucesso: true; dados: T}
    | {sucesso: false; mensagem: string};
 
-class ServicoAulas{}
+class ServicoAulas{
+   private repoAlunos = new RepositorioMemoria<Aluno>;
+   private repoAulas = new RepositorioMemoria<Aula>;
+   private repoInscricoes = new RepositorioMemoria<Inscricao>;
 
-class RelatorioAulas{}
+   constructor(repoAlunos: RepositorioMemoria<Aluno>, repoAulas: RepositorioMemoria<Aula>, repoInscricoes: RepositorioMemoria<Inscricao>) {
+      this.repoAlunos = repoAlunos;
+      this.repoAulas = repoAulas;
+      this.repoInscricoes = repoInscricoes;
+   }
 
+   criarAula(modalidade: Modalidade, instrutor: Instrutor, capacidade: number): resultadoOperacao<Aula> {
+      if(!instrutor.modalidades.includes(modalidade)){
+         return { sucesso: false, mensagem: "Instrutor não habilitado para esta modalidade" };
+      }
+
+       const aulaCriada: Aula = { 
+          id: this.repoAulas.gerarId(),
+          modalidade: modalidade,
+          instrutor: instrutor,
+          diaDaSemana: new Date().toLocaleString('pt-BR', { weekday: 'long'}),
+          horarioInicio: new Date().getHours().toString(),
+          capacidadeMaxima: capacidade,
+          status: 'agendada'
+       }
+       this.repoAulas.salvar(aulaCriada);
+       return { sucesso: true, dados: aulaCriada };
+    }
+
+    inscreverAluno(aulaId: number, alunoId: number): resultadoOperacao<Inscricao>{
+       const aula = this.repoAulas.buscarPorId(aulaId);
+       const aluno = this.repoAlunos.buscarPorId(alunoId);
+
+       if(!aula || !aluno){
+         return { sucesso: false, mensagem: "Aula ou aluno não encontrado" };
+       }
+
+       if(aula.capacidadeMaxima <= 0){
+         return { sucesso: false, mensagem: "Aula lotada" };
+       }
+
+       if(aula.status !== 'agendada'){
+         return { sucesso: false, mensagem: "Aula não está agendada" };
+       }
+
+       const inscricao: Inscricao = {
+         id: this.repoInscricoes.gerarId(),
+         aluno: aluno,
+         aula: aula,
+         dataFeita: new Date(),
+         status: 'ativa'
+       };
+       
+       aula.capacidadeMaxima--;
+       this.repoInscricoes.salvar(inscricao);
+       return { sucesso: true, dados: inscricao };
+    }
+
+    cancelarInscricao(inscricaoId: number): resultadoOperacao<Inscricao>{
+      const inscricao = this.repoInscricoes.buscarPorId(inscricaoId);
+
+      if(!inscricao){
+         return { sucesso: false, mensagem: "Inscrição não existente"};
+      }
+
+      if(inscricao.aula.status == 'em_andamento' || inscricao.aula.status == 'concluida'){
+         return { sucesso: false, mensagem: "Não é possível cancelar inscrição em uma Aula em andamento ou concluida"};
+      }
+
+      inscricao.aula.capacidadeMaxima++;
+      inscricao.status = 'cancelada';
+      return {sucesso: true, dados: inscricao};
+    }
+
+    
+    avancarStatus(aulaId: number): resultadoOperacao<Aula>{
+       const aula = this.repoAulas.buscarPorId(aulaId);
+
+       if(!aula){
+          return { sucesso: false, mensagem: "Aula não encontrada"};
+       }
+
+       const fluxoStatus: Record<StatusAula, StatusAula | null> = {
+            agendada: 'em_andamento',
+            em_andamento: 'concluida',
+            concluida: null,
+            cancelada: null
+         }
+
+       if(fluxoStatus[aula.status] == null){
+         return { sucesso: false, mensagem: "Aula cancelada ou concluida"};
+       }
+
+       aula.status = fluxoStatus[aula.status]!;
+       this.repoAulas.salvar(aula);
+       return { sucesso: true, dados: aula};
+    }
+
+    //TODO: Realizar cancelamento de aula
+    
+}
+
+type diaDaSemana = 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado' | 'domingo'
+
+class ServicoRelatorios{
+   constructor(private repoAulas: RepositorioMemoria<Aula>, private repoInscricoes: RepositorioMemoria<Inscricao>) {};
+
+   listarAulas(diaDaSemana: diaDaSemana): Aula[]{
+      return this.repoAulas.listarTodos().filter(aula =>
+         aula.diaDaSemana === diaDaSemana
+      );
+   } 
+
+}
+
+
+function main(): void{
+    const repoAlunos = new RepositorioMemoria<Aluno>;
+    const repoAulas = new RepositorioMemoria<Aula>;
+    const repoInscricoes = new RepositorioMemoria<Inscricao>;
+    const servico = new ServicoAulas(repoAlunos, repoAulas, repoInscricoes);
+    const relatorios = new ServicoRelatorios(repoAulas, repoInscricoes)
+
+
+    const ginastica: Modalidade = {
+      nome: "Ginástica",
+      descricao: "Exercícios de flexibilidade e coordenação",
+      categoria: "flexibilidade"
+    }
+    const spinning: Modalidade = {
+      nome: "Spinning",
+      descricao: "Treinamento de alta intensidade em bicicleta estática",
+      categoria: "cardio"
+    }
+
+    const instrutor1: Instrutor = {
+      nome: "John Doe",
+      email: "john.doe@example.com",
+      modalidades: [ginastica, spinning],
+      contato: "119999-5555"
+    }
+
+    const instrutor2: Instrutor = {
+      nome: "Jane Smith",
+      email: "jane.smith@example.com",
+      modalidades: [ginastica],
+      contato: "119999-6666"
+    }
+
+    const aula1 = servico.criarAula(ginastica, instrutor2, 20);
+    const aula2 = servico.criarAula(spinning, instrutor1, 15);
+
+    console.log(repoAulas.listarTodos());
+}
+
+main();

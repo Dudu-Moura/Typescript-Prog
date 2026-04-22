@@ -5,11 +5,20 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Current TS File",
-      "runtimeArgs": ["-r", "ts-node/register"],
-      "args": ["${file}"],
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/tsx.cmd",
+      "program": "${file}",
       "cwd": "${workspaceFolder}",
+      "sourceMaps": true,
+      "env": {
+        "NODE_OPTIONS": ""
+      },
+      "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
-      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ]
     }
   ]
 }
