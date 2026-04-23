@@ -217,19 +217,11 @@ type resultadoOperacao<T> =
     | { sucesso: false; mensagem: string };
 
 class ServicoAulas {
-    private repoAlunos = new RepositorioMemoria<Aluno>();
-    private repoAulas = new RepositorioMemoria<Aula>();
-    private repoInscricoes = new RepositorioMemoria<Inscricao>();
-
-    constructor(
-        repoAlunos: RepositorioMemoria<Aluno>,
-        repoAulas: RepositorioMemoria<Aula>,
-        repoInscricoes: RepositorioMemoria<Inscricao>,
-    ) {
-        this.repoAlunos = repoAlunos;
-        this.repoAulas = repoAulas;
-        this.repoInscricoes = repoInscricoes;
-    }
+   constructor(
+      private repoAulas: RepositorioMemoria<Aula>,
+      private repoInscricoes: RepositorioMemoria<Inscricao>,
+      private repoAlunos: RepositorioMemoria<Aluno>
+  ) {}
 
     criarAula(
         modalidade: Modalidade,
@@ -354,7 +346,10 @@ class ServicoRelatorios {
 
     buscarInscricoes(alunoId: number): Inscricao[] {
        const aluno = this.repoAlunos.buscarPorId(alunoId)
-       return this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.aluno == aluno)
+       if(!aluno){
+         return [];
+       }
+       return this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.aluno.id == aluno.id)
     }
 
     listarAulasStatus(status: StatusAula): Aula[]{
@@ -368,7 +363,7 @@ class ServicoRelatorios {
       }
       const aula = this.repoAulas.buscarPorId(aulaId)!;
       let capacidade = aula.capacidadeMaxima;
-      const inscricoes = this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.status = 'ativa')
+      const inscricoes = this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.status == 'ativa')
       inscricoes.forEach((inscricao) => {
          if (inscricao.aula == aula){
             capacidade--;
@@ -382,7 +377,7 @@ function main(): void {
     const repoAlunos = new RepositorioMemoria<Aluno>();
     const repoAulas = new RepositorioMemoria<Aula>();
     const repoInscricoes = new RepositorioMemoria<Inscricao>();
-    const servico = new ServicoAulas(repoAlunos, repoAulas, repoInscricoes);
+    const servico = new ServicoAulas(repoAulas, repoInscricoes, repoAlunos);
     const relatorios = new ServicoRelatorios(repoAulas, repoInscricoes, repoAlunos);
 
     const ginastica: Modalidade = {
