@@ -119,255 +119,312 @@
     especialmente nos parâmetros de criação de aula e aluno
 */
 
-import { group } from "node:console";
+import { group } from 'node:console';
+import { KeyObject } from 'node:crypto';
 
 // Escreva seu código abaixo desta linha
 
-interface Repositorio<T extends { id: number }>{
-   salvar(item: T): void,
-   buscarPorId(id: number): T | undefined
-   remover(id: number): boolean,
-   listarTodos(): T[],
-   gerarId(): number
+interface Repositorio<T extends { id: number }> {
+    salvar(item: T): void;
+    buscarPorId(id: number): T | undefined;
+    remover(id: number): boolean;
+    listarTodos(): T[];
+    gerarId(): number;
 }
-class RepositorioMemoria<T extends { id: number }> implements Repositorio<T>{
-   private dados: T[] = [];
-   private proximoId: number = 0;
+class RepositorioMemoria<T extends { id: number }> implements Repositorio<T> {
+    private dados: T[] = [];
+    private proximoId: number = 1;
 
-   salvar(item: T): void{
-      const index = this.dados.findIndex(d => d.id == item.id);
-      if(index >= 0){
-         this.dados[index] = item;
-         console.log(`${item} atualizado no repositório`);
-         return
-      }
-      this.dados.push(item);
-      console.log(`${item} salvo no repositório`);
-      return;
-   }
+    salvar(item: T): void {
+        const index = this.dados.findIndex((d) => d.id == item.id);
+        if (index >= 0) {
+            this.dados[index] = item;
+            console.log('item atualizado no repositório');
+            return;
+        }
+        this.dados.push(item);
+        console.log("item salvo no repositório");
+        return;
+    }
 
-   buscarPorId(id: number): T | undefined{
-      const index = this.dados.findIndex(d => d.id == id);
-      if(index >= 0){
-         return this.dados[index];
-      }
-      console.log("Item não encontrado");
-      return;
-   }
+    buscarPorId(id: number): T | undefined {
+        const index = this.dados.findIndex((d) => d.id == id);
+        if (index >= 0) {
+            return this.dados[index];
+        }
+        console.log('Item não encontrado');
+        return;
+    }
 
-   remover(id: number): boolean{
-      const estadoAntes: number = this.dados.length   
-      this.dados = this.dados.filter(d => d.id != id);
-      return this.dados.length < estadoAntes;
-   }
+    remover(id: number): boolean {
+        const estadoAntes: number = this.dados.length;
+        this.dados = this.dados.filter((d) => d.id != id);
+        return this.dados.length < estadoAntes;
+    }
 
-   listarTodos(): T[] {
-      return [...this.dados];
-   }
+    listarTodos(): T[] {
+        return [...this.dados];
+    }
 
-   gerarId(): number{
+    gerarId(): number {
         return this.proximoId++;
-      }
+    }
 }
 
-interface Aluno{
-   id: number,
-   nome: string,
-   email: string,
-   dataMatricula: Date,
-   plano?: 'basic' | 'vip'  | 'premium'
+interface Aluno {
+    id: number;
+    nome: string;
+    email: string;
+    dataMatricula: Date;
+    plano?: 'basic' | 'vip' | 'premium';
 }
 
-interface Instrutor{
-   nome: string,
-   email: string,
-   modalidades: Modalidade[],
-   contato: string
+interface Instrutor {
+    nome: string;
+    email: string;
+    modalidades: Modalidade[];
+    contato: string;
 }
 
 type StatusAula = 'agendada' | 'em_andamento' | 'concluida' | 'cancelada';
 
-interface Aula{
-   id: number,
-   modalidade: Modalidade,
-   instrutor: Instrutor,
-   diaDaSemana: string,
-   horarioInicio: string,
-   capacidadeMaxima: number,
-   status: StatusAula
+interface Aula {
+    id: number;
+    modalidade: Modalidade;
+    instrutor: Instrutor;
+    diaDaSemana: diaDaSemana;
+    horarioInicio: string;
+    capacidadeMaxima: number;
+    status: StatusAula;
 }
 
-interface Modalidade{
-   nome: string,
-   descricao: string,
-   categoria: 'cardio' | 'força' | 'flexibilidade'
+interface Modalidade {
+    nome: string;
+    descricao: string;
+    categoria: 'cardio' | 'força' | 'flexibilidade';
 }
 
-interface Inscricao{
-   id: number,
-   aluno: Aluno,
-   aula: Aula,
-   dataFeita: Date,
-   status: 'ativa' | 'cancelada'
+interface Inscricao {
+    id: number;
+    aluno: Aluno;
+    aula: Aula;
+    dataFeita: Date;
+    status: 'ativa' | 'cancelada';
 }
 
-type resultadoOperacao<T> = 
-   | {sucesso: true; dados: T}
-   | {sucesso: false; mensagem: string};
+type resultadoOperacao<T> =
+    | { sucesso: true; dados: T }
+    | { sucesso: false; mensagem: string };
 
-class ServicoAulas{
-   private repoAlunos = new RepositorioMemoria<Aluno>;
-   private repoAulas = new RepositorioMemoria<Aula>;
-   private repoInscricoes = new RepositorioMemoria<Inscricao>;
+class ServicoAulas {
+    private repoAlunos = new RepositorioMemoria<Aluno>();
+    private repoAulas = new RepositorioMemoria<Aula>();
+    private repoInscricoes = new RepositorioMemoria<Inscricao>();
 
-   constructor(repoAlunos: RepositorioMemoria<Aluno>, repoAulas: RepositorioMemoria<Aula>, repoInscricoes: RepositorioMemoria<Inscricao>) {
-      this.repoAlunos = repoAlunos;
-      this.repoAulas = repoAulas;
-      this.repoInscricoes = repoInscricoes;
-   }
-
-   criarAula(modalidade: Modalidade, instrutor: Instrutor, capacidade: number): resultadoOperacao<Aula> {
-      if(!instrutor.modalidades.includes(modalidade)){
-         return { sucesso: false, mensagem: "Instrutor não habilitado para esta modalidade" };
-      }
-
-       const aulaCriada: Aula = { 
-          id: this.repoAulas.gerarId(),
-          modalidade: modalidade,
-          instrutor: instrutor,
-          diaDaSemana: new Date().toLocaleString('pt-BR', { weekday: 'long'}),
-          horarioInicio: new Date().getHours().toString(),
-          capacidadeMaxima: capacidade,
-          status: 'agendada'
-       }
-       this.repoAulas.salvar(aulaCriada);
-       return { sucesso: true, dados: aulaCriada };
+    constructor(
+        repoAlunos: RepositorioMemoria<Aluno>,
+        repoAulas: RepositorioMemoria<Aula>,
+        repoInscricoes: RepositorioMemoria<Inscricao>,
+    ) {
+        this.repoAlunos = repoAlunos;
+        this.repoAulas = repoAulas;
+        this.repoInscricoes = repoInscricoes;
     }
 
-    inscreverAluno(aulaId: number, alunoId: number): resultadoOperacao<Inscricao>{
-       const aula = this.repoAulas.buscarPorId(aulaId);
-       const aluno = this.repoAlunos.buscarPorId(alunoId);
+    criarAula(
+        modalidade: Modalidade,
+        instrutor: Instrutor,
+        capacidade: number,
+        diaDaSemana: diaDaSemana,
+        horarioInicio: string
+    ): resultadoOperacao<Aula> {
+        if (!instrutor.modalidades.includes(modalidade)) {
+            return {
+                sucesso: false,
+                mensagem: 'Instrutor não habilitado para esta modalidade',
+            };
+        }
 
-       if(!aula || !aluno){
-         return { sucesso: false, mensagem: "Aula ou aluno não encontrado" };
-       }
-
-       if(aula.capacidadeMaxima <= 0){
-         return { sucesso: false, mensagem: "Aula lotada" };
-       }
-
-       if(aula.status !== 'agendada'){
-         return { sucesso: false, mensagem: "Aula não está agendada" };
-       }
-
-       const inscricao: Inscricao = {
-         id: this.repoInscricoes.gerarId(),
-         aluno: aluno,
-         aula: aula,
-         dataFeita: new Date(),
-         status: 'ativa'
-       };
-       
-       aula.capacidadeMaxima--;
-       this.repoInscricoes.salvar(inscricao);
-       return { sucesso: true, dados: inscricao };
+        const aulaCriada: Aula = {
+            id: this.repoAulas.gerarId(),
+            modalidade: modalidade,
+            instrutor: instrutor,
+            diaDaSemana: diaDaSemana,
+            horarioInicio: horarioInicio,
+            capacidadeMaxima: capacidade,
+            status: 'agendada',
+        };
+        this.repoAulas.salvar(aulaCriada);
+        return { sucesso: true, dados: aulaCriada };
     }
 
-    cancelarInscricao(inscricaoId: number): resultadoOperacao<Inscricao>{
-      const inscricao = this.repoInscricoes.buscarPorId(inscricaoId);
+    inscreverAluno(
+        aulaId: number,
+        alunoId: number,
+    ): resultadoOperacao<Inscricao> {
+        const aula = this.repoAulas.buscarPorId(aulaId);
+        const aluno = this.repoAlunos.buscarPorId(alunoId);
 
-      if(!inscricao){
-         return { sucesso: false, mensagem: "Inscrição não existente"};
-      }
+        if (!aula || !aluno) {
+            return { sucesso: false, mensagem: 'Aula ou aluno não encontrado' };
+        }
 
-      if(inscricao.aula.status == 'em_andamento' || inscricao.aula.status == 'concluida'){
-         return { sucesso: false, mensagem: "Não é possível cancelar inscrição em uma Aula em andamento ou concluida"};
-      }
+        if (aula.capacidadeMaxima <= 0) {
+            return { sucesso: false, mensagem: 'Aula lotada' };
+        }
 
-      inscricao.aula.capacidadeMaxima++;
-      inscricao.status = 'cancelada';
-      return {sucesso: true, dados: inscricao};
+        if (aula.status !== 'agendada') {
+            return { sucesso: false, mensagem: 'Aula não está agendada' };
+        }
+
+        const inscricao: Inscricao = {
+            id: this.repoInscricoes.gerarId(),
+            aluno: aluno,
+            aula: aula,
+            dataFeita: new Date(),
+            status: 'ativa',
+        };
+
+        this.repoInscricoes.salvar(inscricao);
+        return { sucesso: true, dados: inscricao };
     }
 
-    
-    avancarStatus(aulaId: number): resultadoOperacao<Aula>{
-       const aula = this.repoAulas.buscarPorId(aulaId);
+    cancelarInscricao(inscricaoId: number): resultadoOperacao<Inscricao> {
+        const inscricao = this.repoInscricoes.buscarPorId(inscricaoId);
 
-       if(!aula){
-          return { sucesso: false, mensagem: "Aula não encontrada"};
-       }
+        if (!inscricao) {
+            return { sucesso: false, mensagem: 'Inscrição não existente' };
+        }
 
-       const fluxoStatus: Record<StatusAula, StatusAula | null> = {
+        if (
+            inscricao.aula.status == 'em_andamento' ||
+            inscricao.aula.status == 'concluida'
+        ) {
+            return {
+                sucesso: false,
+                mensagem:
+                    'Não é possível cancelar inscrição em uma Aula em andamento ou concluida',
+            };
+        }
+
+        inscricao.status = 'cancelada';
+        return { sucesso: true, dados: inscricao };
+    }
+
+    avancarStatus(aulaId: number): resultadoOperacao<Aula> {
+        const aula = this.repoAulas.buscarPorId(aulaId);
+
+        if (!aula) {
+            return { sucesso: false, mensagem: 'Aula não encontrada' };
+        }
+
+        const fluxoStatus: Record<StatusAula, StatusAula | null> = {
             agendada: 'em_andamento',
             em_andamento: 'concluida',
             concluida: null,
-            cancelada: null
-         }
+            cancelada: null,
+        };
 
-       if(fluxoStatus[aula.status] == null){
-         return { sucesso: false, mensagem: "Aula cancelada ou concluida"};
-       }
+        if (fluxoStatus[aula.status] == null) {
+            return { sucesso: false, mensagem: 'Aula cancelada ou concluida' };
+        }
 
-       aula.status = fluxoStatus[aula.status]!;
-       this.repoAulas.salvar(aula);
-       return { sucesso: true, dados: aula};
+        aula.status = fluxoStatus[aula.status]!;
+        this.repoAulas.salvar(aula);
+        return { sucesso: true, dados: aula };
     }
 
     //TODO: Realizar cancelamento de aula
-    
 }
 
-type diaDaSemana = 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado' | 'domingo'
+type diaDaSemana = 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado' | 'domingo';
 
-class ServicoRelatorios{
-   constructor(private repoAulas: RepositorioMemoria<Aula>, private repoInscricoes: RepositorioMemoria<Inscricao>) {};
+class ServicoRelatorios {
+    constructor(
+        private repoAulas: RepositorioMemoria<Aula>,
+        private repoInscricoes: RepositorioMemoria<Inscricao>,
+        private repoAlunos: RepositorioMemoria<Aluno>
+    ) {}
 
-   listarAulas(diaDaSemana: diaDaSemana): Aula[]{
-      return this.repoAulas.listarTodos().filter(aula =>
-         aula.diaDaSemana === diaDaSemana
-      );
-   } 
+    listarAulas(diaDaSemana: diaDaSemana): Aula[] {
+        return this.repoAulas
+            .listarTodos()
+            .filter((aula) => aula.diaDaSemana === diaDaSemana);
+    }
 
+    buscarInscricoes(alunoId: number): Inscricao[] {
+       const aluno = this.repoAlunos.buscarPorId(alunoId)
+       return this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.aluno == aluno)
+    }
+
+    listarAulasStatus(status: StatusAula): Aula[]{
+      return this.repoAulas.listarTodos().filter((aula) => aula.status === status)
+    }
+
+    vagasRestantes(aulaId: number): number | undefined{
+      if(this.repoAulas.buscarPorId(aulaId) == null){
+         console.log('Aula não encontrada');
+         return;
+      }
+      const aula = this.repoAulas.buscarPorId(aulaId)!;
+      let capacidade = aula.capacidadeMaxima;
+      const inscricoes = this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.status = 'ativa')
+      inscricoes.forEach((inscricao) => {
+         if (inscricao.aula == aula){
+            capacidade--;
+         }
+      })
+      return capacidade;
+    }
 }
 
-
-function main(): void{
-    const repoAlunos = new RepositorioMemoria<Aluno>;
-    const repoAulas = new RepositorioMemoria<Aula>;
-    const repoInscricoes = new RepositorioMemoria<Inscricao>;
+function main(): void {
+    const repoAlunos = new RepositorioMemoria<Aluno>();
+    const repoAulas = new RepositorioMemoria<Aula>();
+    const repoInscricoes = new RepositorioMemoria<Inscricao>();
     const servico = new ServicoAulas(repoAlunos, repoAulas, repoInscricoes);
-    const relatorios = new ServicoRelatorios(repoAulas, repoInscricoes)
-
+    const relatorios = new ServicoRelatorios(repoAulas, repoInscricoes, repoAlunos);
 
     const ginastica: Modalidade = {
-      nome: "Ginástica",
-      descricao: "Exercícios de flexibilidade e coordenação",
-      categoria: "flexibilidade"
-    }
+        nome: 'Ginástica',
+        descricao: 'Exercícios de flexibilidade e coordenação',
+        categoria: 'flexibilidade',
+    };
     const spinning: Modalidade = {
-      nome: "Spinning",
-      descricao: "Treinamento de alta intensidade em bicicleta estática",
-      categoria: "cardio"
-    }
+        nome: 'Spinning',
+        descricao: 'Treinamento de alta intensidade em bicicleta estática',
+        categoria: 'cardio',
+    };
 
     const instrutor1: Instrutor = {
-      nome: "John Doe",
-      email: "john.doe@example.com",
-      modalidades: [ginastica, spinning],
-      contato: "119999-5555"
-    }
+        nome: 'John Doe',
+        email: 'john.doe@example.com',
+        modalidades: [ginastica, spinning],
+        contato: '119999-5555',
+    };
 
     const instrutor2: Instrutor = {
-      nome: "Jane Smith",
-      email: "jane.smith@example.com",
-      modalidades: [ginastica],
-      contato: "119999-6666"
-    }
+        nome: 'Jane Smith',
+        email: 'jane.smith@example.com',
+        modalidades: [ginastica],
+        contato: '119999-6666',
+    };
 
-    const aula1 = servico.criarAula(ginastica, instrutor2, 20);
-    const aula2 = servico.criarAula(spinning, instrutor1, 15);
+    repoAlunos.salvar({
+      id: repoAlunos.gerarId(),
+      nome: 'Eduardo',
+      email: 'abc@email.com',
+      dataMatricula: new Date()
+    })
 
-    console.log(repoAulas.listarTodos());
+    const aula1 = servico.criarAula(ginastica, instrutor2, 20, 'quarta', '08:00');
+    const aula2 = servico.criarAula(spinning, instrutor1, 15, 'quinta', '09:00');
+    const inscricaoEduardo = servico.inscreverAluno(1,1);
+
+    console.log(relatorios.listarAulas('quinta'));
+    console.log(relatorios.buscarInscricoes(1))
+    console.log(relatorios.listarAulasStatus('agendada'))
+    console.log(relatorios.vagasRestantes(1))
 }
 
 main();
