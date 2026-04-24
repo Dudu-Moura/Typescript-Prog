@@ -256,12 +256,17 @@ class ServicoAulas {
     ): resultadoOperacao<Inscricao> {
         const aula = this.repoAulas.buscarPorId(aulaId);
         const aluno = this.repoAlunos.buscarPorId(alunoId);
+        
 
         if (!aula || !aluno) {
             return { sucesso: false, mensagem: 'Aula ou aluno não encontrado' };
         }
-
-        if (aula.capacidadeMaxima <= 0) {
+        
+        let capacidadeAula = aula.capacidadeMaxima;
+        const inscricoesAula = this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.aula.id == aula.id && inscricao.status == 'ativa');
+        inscricoesAula.forEach((inscricao) => capacidadeAula--);
+        
+        if (capacidadeAula <= 0) {
             return { sucesso: false, mensagem: 'Aula lotada' };
         }
 
@@ -327,6 +332,20 @@ class ServicoAulas {
     }
 
     //TODO: Realizar cancelamento de aula
+    cancelamentoAula(aulaId: number): resultadoOperacao<Aula>{
+      const aula = this.repoAulas.buscarPorId(aulaId)
+      if(!aula){
+         return { sucesso: false, mensagem: "Aula não existente"}
+      }
+      else if(aula.status == 'cancelada' || aula.status == 'concluida'){
+         return { sucesso: false, mensagem: "Aula já cancelada ou concluida"};
+      }
+      const inscricoes = this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.status == 'ativa' && inscricao.aula.id == aula.id)
+      inscricoes.forEach((inscricao) => inscricao.status = 'cancelada' );
+      aula.status = 'cancelada'
+      this.repoAulas.salvar(aula);
+      return { sucesso: true, dados: aula}
+    }
 }
 
 type diaDaSemana = 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado' | 'domingo';
@@ -365,7 +384,7 @@ class ServicoRelatorios {
       let capacidade = aula.capacidadeMaxima;
       const inscricoes = this.repoInscricoes.listarTodos().filter((inscricao) => inscricao.status == 'ativa')
       inscricoes.forEach((inscricao) => {
-         if (inscricao.aula == aula){
+         if (inscricao.aula.id == aula.id){
             capacidade--;
          }
       })
@@ -374,6 +393,18 @@ class ServicoRelatorios {
 }
 
 function main(): void {
+
+    function verificarResultado(operacao: resultadoOperacao<unknown>): void{
+        if(operacao.sucesso){
+            console.log("Operação concluida com sucesso");
+            return;
+        }
+        else{
+            console.log("Operação falha - ERRO: " + operacao.mensagem)
+            return;
+        }
+    }
+
     const repoAlunos = new RepositorioMemoria<Aluno>();
     const repoAulas = new RepositorioMemoria<Aula>();
     const repoInscricoes = new RepositorioMemoria<Inscricao>();
@@ -412,14 +443,34 @@ function main(): void {
       dataMatricula: new Date()
     })
 
+    repoAlunos.salvar({
+        id: repoAlunos.gerarId(),
+        nome: 'John Does',
+        email: 'johndoes@email.com',
+        dataMatricula: new Date()
+    })
+
     const aula1 = servico.criarAula(ginastica, instrutor2, 20, 'quarta', '08:00');
+    verificarResultado(aula1);
     const aula2 = servico.criarAula(spinning, instrutor1, 15, 'quinta', '09:00');
+    verificarResultado(aula2);
+    const aula3 = servico.criarAula(ginastica, instrutor2, 1, 'sexta', '09:00');
+    verificarResultado(aula3);
+    
     const inscricaoEduardo = servico.inscreverAluno(1,1);
+    verificarResultado(inscricaoEduardo);
+    const inscricaoJohn = servico.inscreverAluno(1,2);
+    verificarResultado(inscricaoJohn);
+    const inscricaoJohn2 = servico.inscreverAluno(3,2);
+    verificarResultado(inscricaoJohn2);
+    const inscricaoEduardo2 = servico.inscreverAluno(3, 1);
+    verificarResultado(inscricaoEduardo2);
+
 
     console.log(relatorios.listarAulas('quinta'));
-    console.log(relatorios.buscarInscricoes(1))
-    console.log(relatorios.listarAulasStatus('agendada'))
-    console.log(relatorios.vagasRestantes(1))
+    console.log(relatorios.buscarInscricoes(1));
+    console.log(relatorios.listarAulasStatus('agendada'));
+    console.log(relatorios.vagasRestantes(1));
 }
 
 main();
