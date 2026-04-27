@@ -119,9 +119,6 @@
     especialmente nos parâmetros de criação de aula e aluno
 */
 
-import { group } from 'node:console';
-import { KeyObject } from 'node:crypto';
-
 // Escreva seu código abaixo desta linha
 
 interface Repositorio<T extends { id: number }> {

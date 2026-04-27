@@ -6,8 +6,6 @@
 // ║           Static, Getters/Setters, Method Overriding             ║
 // ╚══════════════════════════════════════════════════════════════════╝
 
-import { stringify } from 'node:querystring';
-
 // ┌──────────────────────────────────────────────────────────────────┐
 // │                    📊 PROGRESSO                                  │
 // │                                                                  │
