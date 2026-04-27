@@ -72,21 +72,23 @@ function buscarConfiguracoes(): Promise<Config>{
 }
 
 async function carregarPerfilParelelo(){
+    const inicio = Date.now();
     const resultado = await Promise.all([
         buscarUsuario(1),
         buscarPermissoes(1),
         buscarConfiguracoes()
     ])
-    console.log(`Feito em ${Date.now()}`)
+    console.log(`Feito em ${Date.now() - inicio}ms`)
     return resultado;
 }
 
 
 async function carregarPerfilSequencial(){
+    const inicio = Date.now();
     const resultado1 = await buscarUsuario(1);
     const resultado2 = await buscarPermissoes(1);
     const resultado3 = await buscarConfiguracoes();
-    console.log(`Feito em ${Date.now()}`)
+    console.log(`Feito em ${Date.now() - inicio}ms`)
     return { resultado1, resultado2, resultado3 };
 }
 
