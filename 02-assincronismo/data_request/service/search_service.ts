@@ -19,7 +19,7 @@ async function getUser(userId: number): Promise<User>{
 
 async function searchUserPosts(userId: number): Promise<Post>{
     try{
-        const response= await axios.get<Post>(`https://jsonplaceholder.typicode.com/posts/${userId}`);
+        const response = await axios.get<Post>(`https://jsonplaceholder.typicode.com/posts/${userId}`);
         return response.data;
     }
     catch(ex){

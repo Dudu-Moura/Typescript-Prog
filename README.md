@@ -126,8 +126,3 @@ npx tsc && node dist/exercicio.js
 [█░░░░░░░░░░░░░░░]  1 / 16 módulos concluídos
 ```
 
----
-
-<div align="center">
-  <sub>Feito com 💙 e muito <code>tsc --watch</code></sub>
-</div>
