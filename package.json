@@ -1,10 +1,27 @@
 {
+  "name": "typescript-studies",
+  "version": "1.0.0",
+  "scripts": {
+    "run:oop": "ts-node --transpile-only 01-typescript/exercises_oop.ts",
+    "run:interfaces": "ts-node --transpile-only 01-typescript/exercises_oop_interfaces.ts",
+    "run:async": "ts-node --transpile-only 02-assincronismo/data_request/index.ts",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "build": "tsc"
+  },
   "dependencies": {
     "axios": "^1.15.2"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
