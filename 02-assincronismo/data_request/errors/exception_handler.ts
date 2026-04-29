@@ -1,6 +1,7 @@
 import axios from "axios"
 
 export async function requestHandle(request: Promise<unknown>, url: string){
+    //TODO: Refatorar lógica do requestHandler
     try{
         const response = await axios.get<unknown>(url);
         return response.data;

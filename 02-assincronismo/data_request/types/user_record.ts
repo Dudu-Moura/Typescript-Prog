@@ -1,8 +1,8 @@
-import { CommentPost } from "./comment_post";
+import { PostWithComments } from "./comment_post";
 import { User } from "./user";
 
 export interface UserRecord{
     user: User,
-    posts: CommentPost[],
+    posts: PostWithComments[],
     totalComentaries: number
 }

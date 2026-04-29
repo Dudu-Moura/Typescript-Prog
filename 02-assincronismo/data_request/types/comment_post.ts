@@ -1,7 +1,7 @@
 import { Post } from "./post";
 import { Comment } from "./comment";
 
-export interface CommentPost{
+export interface PostWithComments{
     post: Post
     comentary: Comment[];
 }
