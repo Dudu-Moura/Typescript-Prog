@@ -5,6 +5,7 @@
     "run:oop": "ts-node --transpile-only 01-typescript/exercises_oop.ts",
     "run:interfaces": "ts-node --transpile-only 01-typescript/exercises_oop_interfaces.ts",
     "run:async": "ts-node --transpile-only 02-assincronismo/data_request/index.ts",
+    "run:express": "ts-node --transpile-only 03-http_express/index.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "build": "tsc"
