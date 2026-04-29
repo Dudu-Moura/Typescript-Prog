@@ -8,16 +8,21 @@ export class ReportService{
     constructor(private SearchService: SearchService){}
 
     async createReport(userId: number): Promise<UserRecord>{ 
+        
         const report = await Promise.all([
             this.SearchService.getUser(userId),
             this.SearchService.getUserPosts(userId),
         ])
+
         const comments = await Promise.all(report[1].map(Posts => this.SearchService.getPostComments(Posts.id)))
+
         const postsWithComments = report[1].map((post, i) => ({
             post: post,
             comentary: comments[i],
         }))
+
         const totalComments = comments.reduce((soma, arr) => soma + arr.length, 0);
+
         return ({ user: report[0] , posts: postsWithComments, totalComentaries: totalComments});
     }
 
