@@ -328,7 +328,6 @@ class ServicoAulas {
         return { sucesso: true, dados: aula };
     }
 
-    //TODO: Realizar cancelamento de aula
     cancelamentoAula(aulaId: number): resultadoOperacao<Aula>{
       const aula = this.repoAulas.buscarPorId(aulaId)
       if(!aula){
