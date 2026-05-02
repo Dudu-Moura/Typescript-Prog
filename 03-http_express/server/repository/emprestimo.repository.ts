@@ -1,3 +1,4 @@
+import { networkInterfaces } from "node:os";
 import { Emprestimo, EmprestimoCreate } from "../types/emprestimo";
 
 export class EmprestimoRepository {
@@ -13,14 +14,14 @@ export class EmprestimoRepository {
     }
 
     create(emprestimo: EmprestimoCreate): Emprestimo{
-        const data: Emprestimo = {
+        const newEmprestimo: Emprestimo = {
             id: this.nextId++,
             dataEmprestimo: new Date(),
             devolvido: false,
             ...emprestimo
         }
-        this.data.push(data);
-        return data;
+        this.data.push(newEmprestimo);
+        return newEmprestimo;
     }
 
     update(id: number, emprestimo: Partial<Emprestimo>): Emprestimo | undefined{
@@ -30,11 +31,5 @@ export class EmprestimoRepository {
         return this.data[index];
     }
 
-    delete(id: number): boolean{
-        const before = this.data.length;
-        this.data = this.data.filter(e => e.id != id);
-        return before > this.data.length
-    }
 
-    
 }
