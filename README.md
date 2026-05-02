@@ -22,8 +22,8 @@ Acompanhe o progresso dos módulos de estudo:
 | ✅ | **Assincronismo** | Promises, async/await, tratamento de erro async |
 | ✅ | **Import / Export** | Módulos ES e CommonJS |
 | ⬜ | **Node.js Básico** | Módulos nativos: `fs`, `http`, variáveis de ambiente |
-| ⬜ | **HTTP Básico** | Verbos, status codes, headers, REST |
-| ⬜ | **Express / Fastify** | Roteamento, middlewares, controllers |
+| ✅ | **HTTP Básico** | Verbos, status codes, headers, REST |
+| ✅ | **Express** | Roteamento, middlewares, controllers |
 | ⬜ | **Variáveis de Ambiente** | `.env`, boas práticas de segurança |
 | ⬜ | **Banco de Dados** | SQL básico + Prisma ORM |
 | ⬜ | **Validação de Dados** | Zod integrado com TypeScript |
@@ -123,6 +123,6 @@ npx tsc && node dist/exercicio.js
 ## 📈 Progresso
 
 ```
-[███░░░░░░░░░░░░░]  3 / 16 módulos concluídos
+[█████░░░░░░░░░░░]  5 / 16 módulos concluídos
 ```
 
