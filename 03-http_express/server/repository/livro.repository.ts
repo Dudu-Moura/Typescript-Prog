@@ -1,9 +1,8 @@
-import { nextTick } from "node:process";
 import { CreateLivro, Livro, UpdateLivro } from "../types/livro";
 
 export class LivroRepository{
     private data: Livro[] = [];
-    private nextId: number = 0;
+    private nextId: number = 1;
 
     listAll(): Livro[]{
         return [...this.data]
@@ -27,7 +26,7 @@ export class LivroRepository{
     update(id:number, livro: Partial<Livro>): Livro | undefined{
         const index = this.data.findIndex(l => l.id == id);
         if(index < 0) return undefined;
-        this.data[index] = {...livro, ...this.data[index]}
+        this.data[index] = { ...this.data[index], ...livro }
         return this.data[index];
     }
 

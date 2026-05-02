@@ -8,7 +8,8 @@
     "run:express": "ts-node --transpile-only 03-http_express/index.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build": "tsc"
+    "build": "tsc",
+    "run:file": "tsx"
   },
   "dependencies": {
     "axios": "^1.15.2",

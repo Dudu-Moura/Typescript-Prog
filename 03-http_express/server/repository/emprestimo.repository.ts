@@ -1,9 +1,8 @@
-import { networkInterfaces } from "node:os";
 import { Emprestimo, CreateEmprestimo } from "../types/emprestimo";
 
 export class EmprestimoRepository {
-    data: Emprestimo[] = []
-    nextId: number = 0;
+    private data: Emprestimo[] = []
+    private nextId: number = 1;
 
     listAll(): Emprestimo[]{
         return [...this.data]
@@ -27,9 +26,7 @@ export class EmprestimoRepository {
     update(id: number, emprestimo: Partial<Emprestimo>): Emprestimo | undefined{
         const index = this.data.findIndex(e => e.id == id);
         if(index < 0) return undefined;
-        this.data[index] = { ...emprestimo, ...this.data[index]};
+        this.data[index] = {  ...this.data[index], ...emprestimo };
         return this.data[index];
     }
-
-
 }

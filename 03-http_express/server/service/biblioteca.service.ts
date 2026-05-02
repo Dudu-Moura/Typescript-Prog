@@ -14,7 +14,7 @@ export class BibliotecaService{
 
         if(disponivel == undefined) return livros;
         
-        return livros.filter(l => l.disponivel == true);
+        return livros.filter(l => l.disponivel == disponivel);
     }
 
     listarEmprestimos(devolvido?: boolean): Emprestimo[]{
@@ -22,7 +22,7 @@ export class BibliotecaService{
 
         if(devolvido == undefined) return emprestimos;
 
-        return emprestimos.filter(e => e.devolvido == false);
+        return emprestimos.filter(e => e.devolvido == devolvido);
     }
 
     buscarLivroPorId(livroId: number): Livro | undefined{
@@ -38,7 +38,7 @@ export class BibliotecaService{
     }
 
     realizarEmprestimo(emprestimo: CreateEmprestimo): Emprestimo{
-        const livro =  this.LivroRepo.listAll().find(l => l.id == emprestimo.livroId);
+        const livro =  this.LivroRepo.findById(emprestimo.livroId);
 
         if(!livro) throw new Error("Este livro não esta registrado");
 

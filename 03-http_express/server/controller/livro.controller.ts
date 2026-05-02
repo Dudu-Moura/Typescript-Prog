@@ -1,26 +1,37 @@
 import { BibliotecaService } from "../service/biblioteca.service";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { CreateLivro } from "../types/livro";
 
 export class LivroController{
     constructor(private bibliotecaService: BibliotecaService){};
 
 
-    listar = async (req: Request, res: Response): Promise<void> => {
-        const disponivel = req.query.disponivel === undefined ? undefined : req.query.disponivel === 'true';
-        const livros = this.bibliotecaService.listarLivros(disponivel);
-        res.json(livros);
+    listar = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try{
+            const disponivel = req.query.disponivel === undefined ? undefined : req.query.disponivel === 'true';
+            const livros = this.bibliotecaService.listarLivros(disponivel);
+        
+            res.json(livros);
+        }
+        catch(ex){
+            next(ex);
+        }
     }
 
-    buscarPorId = async (req: Request, res: Response): Promise<void> => {
-        const id = Number(req.params.id);
-        const livro = this.bibliotecaService.buscarLivroPorId(id);
+    buscarPorId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try{
+            const id = Number(req.params.id);
+            const livro = this.bibliotecaService.buscarLivroPorId(id);
 
-        if(!livro){
-            res.status(404).json("Livro não existente");
-            return;
-        }  
-        res.json(livro);
+            if(!livro){
+                res.status(404).json({ erro: "Livro não existente" });
+                return;
+            }  
+            res.json(livro);
+        }
+        catch(ex){
+            next(ex);
+        }
     }
 
     criar = async (req: Request<{}, {}, CreateLivro >, res: Response): Promise<void> => {
@@ -28,21 +39,21 @@ export class LivroController{
         res.status(201).json(livro);
     }
 
-    delete = async (req: Request, res: Response): Promise<void> => {
-        const id = Number(req.params.id);
-        const livro = this.bibliotecaService.buscarLivroPorId(id);
+    delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+       try{ 
+            const id = Number(req.params.id);
+            const livro = this.bibliotecaService.buscarLivroPorId(id);
         
-        if(!livro) {
-            res.status(404).json("Livro não existente");
-            return;
-        }
-        else if(livro.disponivel == false){
-            res.status(400).json("Livro não disponivel");
-            return;
-        }
+            if(!livro) {
+                res.status(404).json({ erro: "Livro não existente" });
+                return;
+            }
         
-        this.bibliotecaService.deletarLivro(id);
-        res.json(livro + "apagado");
+            this.bibliotecaService.deletarLivro(id);
+            res.status(200).json({ mensagem: 'Livro apagado', livro });
+       }
+       catch(ex) {
+            next(ex);
+       }
     }
-
 }
