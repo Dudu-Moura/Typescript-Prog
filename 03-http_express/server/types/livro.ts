@@ -8,6 +8,6 @@ export interface Livro {
     criadoEm: Date
 }
 
-export type CreateLivroBody = Omit<Livro, 'id' | 'disponivel' | 'criadoEm'>
+export type CreateLivro = Omit<Livro, 'id' | 'disponivel' | 'criadoEm'>
 export type UpdateLivro = Pick<Livro, 'disponivel'>
 

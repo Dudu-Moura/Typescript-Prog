@@ -1,7 +1,7 @@
 import { LivroRepository } from "../repository/livro.repository";
 import { EmprestimoRepository } from "../repository/emprestimo.repository";
-import { CreateLivroBody, Livro } from "../types/livro";
-import { Emprestimo, EmprestimoCreate } from "../types/emprestimo";
+import { CreateLivro, Livro } from "../types/livro";
+import { Emprestimo, CreateEmprestimo } from "../types/emprestimo";
 
 export class BibliotecaService{
     constructor(
@@ -9,27 +9,51 @@ export class BibliotecaService{
         private EmprestimoRepo: EmprestimoRepository
     ) {}
 
-    listarLivros(): Livro[]{
-        return this.LivroRepo.listAll();
+    listarLivros(disponivel?: boolean): Livro[]{
+        const livros = this.LivroRepo.listAll();
+
+        if(disponivel == undefined) return livros;
+        
+        return livros.filter(l => l.disponivel == true);
     }
 
-    listarEmprestimos(): Emprestimo[]{
-        return this.EmprestimoRepo.listAll();
+    listarEmprestimos(devolvido?: boolean): Emprestimo[]{
+        const emprestimos = this.EmprestimoRepo.listAll();
+
+        if(devolvido == undefined) return emprestimos;
+
+        return emprestimos.filter(e => e.devolvido == false);
     }
 
-    registrarLivro(livro: CreateLivroBody): Livro{
+    buscarLivroPorId(livroId: number): Livro | undefined{
+        return this.LivroRepo.findById(livroId);
+    }
+
+    buscarEmprestimoPorId(emprestimoId: number): Emprestimo | undefined{
+        return this.EmprestimoRepo.findById(emprestimoId);
+    }
+
+    registrarLivro(livro: CreateLivro): Livro{
         return this.LivroRepo.create(livro);
     }
 
-    realizarEmprestimo(emprestimo: EmprestimoCreate): Emprestimo{
+    realizarEmprestimo(emprestimo: CreateEmprestimo): Emprestimo{
         const livro =  this.LivroRepo.listAll().find(l => l.id == emprestimo.livroId);
 
+        if(!livro) throw new Error("Este livro não esta registrado");
+
         if(livro?.disponivel == false) throw new Error("Livro não esta disponivel");
+
+        livro!.disponivel = false;
+        this.LivroRepo.update(livro.id, livro);
 
         return this.EmprestimoRepo.create(emprestimo);
     }
 
-    devolverLivro(emprestimo: Emprestimo): Emprestimo{
+    devolverLivro(emprestimoId: number): Emprestimo{
+        const emprestimo = this.EmprestimoRepo.findById(emprestimoId);
+
+        if(!emprestimo) throw new Error("Empréstimo não existente");
 
         if(emprestimo.devolvido == true) throw new Error("Livro já devolvido");
 

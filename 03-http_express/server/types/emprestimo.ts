@@ -7,4 +7,5 @@ export interface Emprestimo {
     devolvido: boolean
 }
 
-export type EmprestimoCreate = Omit<Emprestimo, 'id' | 'dataEmprestimo' | 'devolvido'>
+export type CreateEmprestimo = Omit<Emprestimo, 'id' | 'dataEmprestimo' | 'devolvido'>
+export type UpdateEmprestimo = Pick<Emprestimo, 'devolvido'>

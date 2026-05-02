@@ -1,5 +1,5 @@
 import { networkInterfaces } from "node:os";
-import { Emprestimo, EmprestimoCreate } from "../types/emprestimo";
+import { Emprestimo, CreateEmprestimo } from "../types/emprestimo";
 
 export class EmprestimoRepository {
     data: Emprestimo[] = []
@@ -13,7 +13,7 @@ export class EmprestimoRepository {
         return this.data.find(emprestimo => emprestimo.id == id);
     }
 
-    create(emprestimo: EmprestimoCreate): Emprestimo{
+    create(emprestimo: CreateEmprestimo): Emprestimo{
         const newEmprestimo: Emprestimo = {
             id: this.nextId++,
             dataEmprestimo: new Date(),

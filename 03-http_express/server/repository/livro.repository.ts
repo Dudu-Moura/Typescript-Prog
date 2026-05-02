@@ -1,5 +1,5 @@
 import { nextTick } from "node:process";
-import { CreateLivroBody, Livro, UpdateLivro } from "../types/livro";
+import { CreateLivro, Livro, UpdateLivro } from "../types/livro";
 
 export class LivroRepository{
     private data: Livro[] = [];
@@ -13,7 +13,7 @@ export class LivroRepository{
         return this.data.find(livro => livro.id == id)
     }
 
-    create(livro: CreateLivroBody): Livro{
+    create(livro: CreateLivro): Livro{
         const newLivro: Livro = {
             id: this.nextId++,
             disponivel: true,
