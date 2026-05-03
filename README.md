@@ -21,7 +21,7 @@ Acompanhe o progresso dos módulos de estudo:
 | ✅ | **TypeScript** | Tipos, interfaces, generics, utilitários |
 | ✅ | **Assincronismo** | Promises, async/await, tratamento de erro async |
 | ✅ | **Import / Export** | Módulos ES e CommonJS |
-| ⬜ | **Node.js Básico** | Módulos nativos: `fs`, `http`, variáveis de ambiente |
+| ✅ | **Node.js Básico** | Módulos nativos: `fs`, `http`, variáveis de ambiente |
 | ✅ | **HTTP Básico** | Verbos, status codes, headers, REST |
 | ✅ | **Express** | Roteamento, middlewares, controllers |
 | ⬜ | **Variáveis de Ambiente** | `.env`, boas práticas de segurança |
@@ -123,6 +123,6 @@ npx tsc && node dist/exercicio.js
 ## 📈 Progresso
 
 ```
-[█████░░░░░░░░░░░]  5 / 16 módulos concluídos
+[██████░░░░░░░░░░]  6 / 16 módulos concluídos
 ```
 
