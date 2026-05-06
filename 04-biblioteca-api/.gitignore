@@ -4,3 +4,5 @@ dist/
 *.d.ts.map
 .env
 /generated/prisma
+
+/src/generated/prisma

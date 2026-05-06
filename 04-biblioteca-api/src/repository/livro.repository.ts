@@ -1,39 +1,45 @@
 import { CreateLivro, Livro, UpdateLivro } from "../types/livro";
+import { prisma } from "../../lib/prisma";
 
 export class LivroRepository{
     private data: Livro[] = [];
     private nextId: number = 1;
 
-    listAll(): Livro[]{
-        return [...this.data]
+    async findAll(disponivel?: boolean): Promise<Livro[]>{
+        return prisma.livro.findMany(
+            { where: disponivel !== undefined ? { disponivel } : undefined }
+        );
     }
 
-    findById(id: number): Livro | undefined{
-        return this.data.find(livro => livro.id == id)
+    async findById(id: number): Promise<Livro | null>{
+        return prisma.livro.findUnique({
+            where: { id }  
+        })
     }
 
-    create(livro: CreateLivro): Livro{
-        const newLivro: Livro = {
-            id: this.nextId++,
-            disponivel: true,
-            criadoEm: new Date(),
-            ...livro
+    async create(dados: CreateLivro): Promise<Livro>{
+        return prisma.livro.create({
+            data: dados 
+        })
+    }
+
+    async update(id:number, dados: Partial<Livro>): Promise<Livro | null>{
+        return prisma.livro.update({
+            where: { id },
+            data: dados
+        })
+    }
+
+    async delete(id: number): Promise<boolean>{
+        try{
+            await prisma.livro.delete({
+                where: { id }
+            });
+            return true;
         }
-        this.data.push(newLivro);
-        return newLivro;
-    }
-
-    update(id:number, livro: Partial<Livro>): Livro | undefined{
-        const index = this.data.findIndex(l => l.id == id);
-        if(index < 0) return undefined;
-        this.data[index] = { ...this.data[index], ...livro }
-        return this.data[index];
-    }
-
-    delete(id: number): boolean{
-        const before = this.data.length;
-        this.data = this.data.filter(l => l.id != id);
-        return before > this.data.length
+        catch(ex){
+            return false;
+        }
     }
 
 }
