@@ -1,11 +1,5 @@
-export interface Emprestimo {
-    id: number,
-    livroId: number,
-    nomeUsuario: string,
-    dataEmprestimo: Date,
-    dataDevolucao?: Date,
-    devolvido: boolean
-}
+import { Emprestimo, Prisma } from "../generated/prisma/client"
 
-export type CreateEmprestimo = Omit<Emprestimo, 'id' | 'dataEmprestimo' | 'devolvido'>
-export type UpdateEmprestimo = Pick<Emprestimo, 'devolvido'>
+export type { Emprestimo };
+export type CreateEmprestimo = Prisma.EmprestimoUncheckedCreateInput
+export type UpdateEmprestimo = Prisma.EmprestimoUpdateInput

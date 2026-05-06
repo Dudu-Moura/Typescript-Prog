@@ -9,71 +9,66 @@ export class BibliotecaService{
         private EmprestimoRepo: EmprestimoRepository
     ) {}
 
-    listarLivros(disponivel?: boolean): Livro[]{
-        const livros = this.LivroRepo.listAll();
-
-        if(disponivel == undefined) return livros;
-        
-        return livros.filter(l => l.disponivel == disponivel);
+    async listarLivros(disponivel?: boolean): Promise<Livro[]>{
+        return this.LivroRepo.findAll(disponivel);
     }
 
-    listarEmprestimos(devolvido?: boolean): Emprestimo[]{
-        const emprestimos = this.EmprestimoRepo.listAll();
-
-        if(devolvido == undefined) return emprestimos;
-
-        return emprestimos.filter(e => e.devolvido == devolvido);
+    async listarEmprestimos(devolvido?: boolean): Promise<Emprestimo[]>{
+        return this.EmprestimoRepo.findAll(devolvido);
     }
 
-    buscarLivroPorId(livroId: number): Livro | undefined{
+    async buscarLivroPorId(livroId: number): Promise<Livro | null>{
         return this.LivroRepo.findById(livroId);
     }
 
-    buscarEmprestimoPorId(emprestimoId: number): Emprestimo | undefined{
+    async buscarEmprestimoPorId(emprestimoId: number): Promise<Emprestimo | null>{
         return this.EmprestimoRepo.findById(emprestimoId);
     }
 
-    registrarLivro(livro: CreateLivro): Livro{
+    async registrarLivro(livro: CreateLivro): Promise<Livro>{
         return this.LivroRepo.create(livro);
     }
 
-    realizarEmprestimo(emprestimo: CreateEmprestimo): Emprestimo{
-        const livro =  this.LivroRepo.findById(emprestimo.livroId);
+    async realizarEmprestimo(emprestimo: CreateEmprestimo): Promise<Emprestimo>{
+        const livro =  await this.LivroRepo.findById(emprestimo.livroId);
 
         if(!livro) throw new Error("Este livro não esta registrado");
 
-        if(livro?.disponivel == false) throw new Error("Livro não esta disponivel");
+        if(livro.disponivel == false) throw new Error("Livro não esta disponivel");
 
-        livro!.disponivel = false;
-        this.LivroRepo.update(livro.id, livro);
+        livro.disponivel = false;
+        await this.LivroRepo.update(livro.id, livro);
 
         return this.EmprestimoRepo.create(emprestimo);
     }
 
-    devolverLivro(emprestimoId: number): Emprestimo{
-        const emprestimo = this.EmprestimoRepo.findById(emprestimoId);
+    async devolverLivro(emprestimoId: number): Promise<Emprestimo>{
+        const emprestimo = await this.EmprestimoRepo.findById(emprestimoId);
 
         if(!emprestimo) throw new Error("Empréstimo não existente");
 
         if(emprestimo.devolvido == true) throw new Error("Livro já devolvido");
 
-        const livroEmprestado = this.LivroRepo.listAll().find(l => l.id == emprestimo.livroId);
+        const livroEmprestado = await this.LivroRepo.findById(emprestimo.livroId);
 
         if(livroEmprestado?.disponivel == true) throw new Error("Livro não foi emprestado");
 
-        livroEmprestado!.disponivel = true
-        emprestimo.devolvido = true
-        emprestimo.dataDevolucao = new Date();
-        this.LivroRepo.update(livroEmprestado!.id, livroEmprestado!)
-        this.EmprestimoRepo.update(emprestimo.id, emprestimo);
-        return emprestimo;
+
+        await this.LivroRepo.update(emprestimo.livroId, { disponivel: true });
+        await this.EmprestimoRepo.update(emprestimoId, {
+            dataDevolucao: new Date(),
+            devolvido: true
+        });
+        return await this.EmprestimoRepo.findById(emprestimoId) as Emprestimo;
     }
 
-    deletarLivro(livroId: number): boolean{
-        const livro = this.LivroRepo.findById(livroId);
-        
-        if(livro?.disponivel == false) throw new Error("Não é possivel deletar livro emprestado");
+    async deletarLivro(livroId: number): Promise<boolean>{
+        const livro = await this.LivroRepo.findById(livroId);
 
-        return this.LivroRepo.delete(livroId);
+        if(!livro) throw new Error("Livro não encontrado");
+        
+        if(livro!.disponivel == false) throw new Error("Não é possivel deletar livro emprestado");
+
+        return await this.LivroRepo.delete(livroId);
     }
 }

@@ -1,13 +1,6 @@
-export interface Livro {
-    id: number,
-    titulo: string,
-    descricao: string,
-    autor: string,
-    isbn: string,
-    disponivel: boolean,
-    criadoEm: Date
-}
+import { Livro, Prisma } from "../generated/prisma/client"
 
-export type CreateLivro = Omit<Livro, 'id' | 'disponivel' | 'criadoEm'>
-export type UpdateLivro = Pick<Livro, 'disponivel'>
+export type { Livro }
+export type CreateLivro = Prisma.LivroCreateInput;
+export type UpdateLivro = Prisma.LivroUpdateInput;
 

@@ -13,17 +13,20 @@ Content-Type: application/json
 GET http://localhost:3000/livros
 
 ### Buscar livro por id
-GET http://localhost:3000/livros/0
+GET http://localhost:3000/livros/1
+
+### Buscar livros disponiveis
+GET http://localhost:3000/livros?disponivel=true
 
 ### Deletar livro
-DELETE http://localhost:3000/livros/0
+DELETE http://localhost:3000/livros/1
 
 ### Criar empréstimo
 POST http://localhost:3000/emprestimos
 Content-Type: application/json
 
 {
-    "livroId": 0,
+    "livroId": 1,
     "nomeUsuario": "Ana"
 }
 
@@ -31,7 +34,19 @@ Content-Type: application/json
 GET http://localhost:3000/emprestimos/
 
 ### Buscar empréstimos por ID
-GET http://localhost:3000/emprestimos/0
+GET http://localhost:3000/emprestimos/1
+
+### Listar empréstimos não devolvidos
+GET http://localhost:3000/emprestimos?devolvido=false
 
 ### Devolver empréstimo
-PATCH http://localhost:3000/emprestimos/1/devolver
+PATCH http://localhost:3000/emprestimos/2/devolver
+
+### Tentar criar empréstimo em livro indisponível
+POST http://localhost:3000/emprestimos
+Content-Type: application/json
+
+{
+    "livroId": 1,
+    "nomeUsuario": "Carlos"
+}

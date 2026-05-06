@@ -1,32 +1,30 @@
 import { Emprestimo, CreateEmprestimo } from "../types/emprestimo";
+import { prisma } from "../../lib/prisma";
 
 export class EmprestimoRepository {
-    private data: Emprestimo[] = []
-    private nextId: number = 1;
 
-    listAll(): Emprestimo[]{
-        return [...this.data]
+    async findAll(devolvido?: boolean): Promise<Emprestimo[]>{
+        return prisma.emprestimo.findMany({
+            where: devolvido !== undefined ? { devolvido } : undefined
+        });
     }
 
-    findById(id: number): Emprestimo | undefined{
-        return this.data.find(emprestimo => emprestimo.id == id);
+    async findById(id: number): Promise<Emprestimo | null>{
+        return prisma.emprestimo.findUnique({
+            where: { id }
+        });
     }
 
-    create(emprestimo: CreateEmprestimo): Emprestimo{
-        const newEmprestimo: Emprestimo = {
-            id: this.nextId++,
-            dataEmprestimo: new Date(),
-            devolvido: false,
-            ...emprestimo
-        }
-        this.data.push(newEmprestimo);
-        return newEmprestimo;
+    async create(dados: CreateEmprestimo): Promise<Emprestimo>{
+        return prisma.emprestimo.create({
+            data: dados
+        });
     }
 
-    update(id: number, emprestimo: Partial<Emprestimo>): Emprestimo | undefined{
-        const index = this.data.findIndex(e => e.id == id);
-        if(index < 0) return undefined;
-        this.data[index] = {  ...this.data[index], ...emprestimo };
-        return this.data[index];
+    async update(id: number, dados: Partial<Emprestimo>): Promise<Emprestimo | null>{
+        return prisma.emprestimo.update({
+            where: { id },
+            data: dados
+        })
     }
 }

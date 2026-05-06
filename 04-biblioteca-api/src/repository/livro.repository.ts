@@ -2,8 +2,6 @@ import { CreateLivro, Livro, UpdateLivro } from "../types/livro";
 import { prisma } from "../../lib/prisma";
 
 export class LivroRepository{
-    private data: Livro[] = [];
-    private nextId: number = 1;
 
     async findAll(disponivel?: boolean): Promise<Livro[]>{
         return prisma.livro.findMany(
