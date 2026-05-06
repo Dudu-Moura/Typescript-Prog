@@ -24,7 +24,7 @@ Acompanhe o progresso dos módulos de estudo:
 | ✅ | **Node.js Básico** | Módulos nativos: `fs`, `http`, variáveis de ambiente |
 | ✅ | **HTTP Básico** | Verbos, status codes, headers, REST |
 | ✅ | **Express** | Roteamento, middlewares, controllers |
-| ⬜ | **Variáveis de Ambiente** | `.env`, boas práticas de segurança |
+| ✅ | **Variáveis de Ambiente** | `.env`, boas práticas de segurança |
 | ⬜ | **Banco de Dados** | SQL básico + Prisma ORM |
 | ⬜ | **Validação de Dados** | Zod integrado com TypeScript |
 | ⬜ | **Autenticação** | JWT, sessions, bcrypt |
@@ -49,20 +49,16 @@ typescript-studies/
 │   └── utility-types/
 │
 ├── 02-assincronismo/
-├── 03-import-export/
-├── 04-nodejs-basico/
-├── 05-http-basico/
-├── 06-express-fastify/
-├── 07-variaveis-de-ambiente/
-├── 08-banco-de-dados/
-├── 09-validacao-zod/
-├── 10-autenticacao/
-├── 11-tratamento-de-erros/
-├── 12-estrutura-de-projeto/
-├── 13-nestjs/
-├── 14-docker/
-├── 15-testes-jest/
-└── 16-decorators/
+│   ├── base/
+│   └── data_request/
+│
+├── 03-http_express/
+│   └── index.ts
+│
+├── 04-biblioteca-api/
+    ├── lib/
+    ├── prisma/
+    └── src/
 ```
 
 ---
@@ -123,6 +119,6 @@ npx tsc && node dist/exercicio.js
 ## 📈 Progresso
 
 ```
-[██████░░░░░░░░░░]  6 / 16 módulos concluídos
+[███████░░░░░░░░░]  7 / 16 módulos concluídos
 ```
 
