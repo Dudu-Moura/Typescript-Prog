@@ -1,7 +1,9 @@
 import { LivroRepository } from "../repository/livro.repository";
 import { EmprestimoRepository } from "../repository/emprestimo.repository";
-import { CreateLivro, Livro } from "../types/livro";
-import { Emprestimo, CreateEmprestimo } from "../types/emprestimo";
+import { CreateLivro, UpdateLivro } from "../dtos/livro.dto";
+import { Livro } from "../generated/prisma/client";
+import { CreateEmprestimo } from "../dtos/emprestimo.dto";
+import { Emprestimo } from "../generated/prisma/client";
 
 export class BibliotecaService{
     constructor(

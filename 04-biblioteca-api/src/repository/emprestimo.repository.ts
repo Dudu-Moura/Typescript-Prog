@@ -1,4 +1,5 @@
-import { Emprestimo, CreateEmprestimo } from "../types/emprestimo";
+import { CreateEmprestimo } from "../dtos/emprestimo.dto";
+import { Emprestimo } from "../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 export class EmprestimoRepository {

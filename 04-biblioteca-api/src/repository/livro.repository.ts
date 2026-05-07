@@ -1,4 +1,5 @@
-import { CreateLivro, Livro, UpdateLivro } from "../types/livro";
+import { CreateLivro, UpdateLivro } from "../dtos/livro.dto";
+import { Livro } from "../generated/prisma/client"
 import { prisma } from "../../lib/prisma";
 
 export class LivroRepository{
@@ -6,7 +7,7 @@ export class LivroRepository{
     async findAll(disponivel?: boolean): Promise<Livro[]> {
         return prisma.livro.findMany({
             where: {
-                ativo: true, // sempre filtra inativos
+                ativo: true,
                 disponivel: disponivel !== undefined ? disponivel : undefined
             }
         });
