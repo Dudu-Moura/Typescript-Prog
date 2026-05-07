@@ -25,14 +25,14 @@ Acompanhe o progresso dos módulos de estudo:
 | ✅ | **HTTP Básico** | Verbos, status codes, headers, REST |
 | ✅ | **Express** | Roteamento, middlewares, controllers |
 | ✅ | **Variáveis de Ambiente** | `.env`, boas práticas de segurança |
-| ⬜ | **Banco de Dados** | SQL básico + Prisma ORM |
+| ✅ | **Banco de Dados** | SQL básico + Prisma ORM |
 | ⬜ | **Validação de Dados** | Zod integrado com TypeScript |
-| ⬜ | **Autenticação** | JWT, sessions, bcrypt |
 | ⬜ | **Tratamento de Erros** | Middleware de erro, erros customizados |
+| ⬜ | **Autenticação** | JWT, sessions, bcrypt |
 | ⬜ | **Estrutura de Projeto** | Rotas, controllers, services, repositories |
 | ⬜ | **NestJS** | Framework opinativo para Node.js |
-| ⬜ | **Docker** | Containers, imagens, compose |
 | ⬜ | **Testes com Jest** | Unit, integration e e2e tests |
+| ⬜ | **Docker** | Containers, imagens, compose |
 | ⬜ | **Decorators** | Metadata, class decorators, experimentais |
 
 ---
