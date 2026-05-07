@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const CreateEmprestimoSchema = z.object({
     nomeUsuario: z.string().min(2),
-    livroId: z.number().positive()
+    livroId: z.number().int().positive()
 })
 
 const UpdateEmprestimoSchema = z.object({
