@@ -34,6 +34,8 @@ export class BibliotecaService{
 
         if(!livro) throw new Error("Este livro não esta registrado");
 
+        if(livro.ativo == false) throw new Error("Este livro não esta ativo");
+        
         if(livro.disponivel == false) throw new Error("Livro não esta disponivel");
 
         livro.disponivel = false;
@@ -62,13 +64,21 @@ export class BibliotecaService{
         return await this.EmprestimoRepo.findById(emprestimoId) as Emprestimo;
     }
 
-    async deletarLivro(livroId: number): Promise<boolean>{
+    async deletarLivro(livroId: number): Promise<Boolean>{
         const livro = await this.LivroRepo.findById(livroId);
 
         if(!livro) throw new Error("Livro não encontrado");
         
+        if(livro.ativo == false) throw new Error("Livro já deletado");
+        
         if(livro!.disponivel == false) throw new Error("Não é possivel deletar livro emprestado");
 
-        return await this.LivroRepo.delete(livroId);
+        try{
+            await this.LivroRepo.delete(livroId);
+            return true;
+        }
+        catch(ex){
+            return false;
+        }
     }
 }

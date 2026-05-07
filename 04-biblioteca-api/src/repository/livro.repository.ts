@@ -3,15 +3,18 @@ import { prisma } from "../../lib/prisma";
 
 export class LivroRepository{
 
-    async findAll(disponivel?: boolean): Promise<Livro[]>{
-        return prisma.livro.findMany(
-            { where: disponivel !== undefined ? { disponivel } : undefined }
-        );
+    async findAll(disponivel?: boolean): Promise<Livro[]> {
+        return prisma.livro.findMany({
+            where: {
+                ativo: true, // sempre filtra inativos
+                disponivel: disponivel !== undefined ? disponivel : undefined
+            }
+        });
     }
 
     async findById(id: number): Promise<Livro | null>{
         return prisma.livro.findUnique({
-            where: { id }  
+            where: { id, ativo: true }  
         })
     }
 
@@ -28,16 +31,10 @@ export class LivroRepository{
         })
     }
 
-    async delete(id: number): Promise<boolean>{
-        try{
-            await prisma.livro.delete({
-                where: { id }
+    async delete(id: number): Promise<Livro | null>{
+            return prisma.livro.update({
+                where: { id },
+                data : { ativo: false, deletadoEm: new Date(), disponivel: false }
             });
-            return true;
-        }
-        catch(ex){
-            return false;
-        }
     }
-
 }

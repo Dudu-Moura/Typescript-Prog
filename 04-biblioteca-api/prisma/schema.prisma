@@ -22,7 +22,9 @@ model Livro {
   autor       String
   isbn        String       @unique
   disponivel  Boolean      @default(true)
-  criadoEm   DateTime     @default(now())
+  ativo       Boolean      @default(true)
+  deletadoEm  DateTime?     
+  criadoEm    DateTime     @default(now())
   emprestimos Emprestimo[]
 }
 
