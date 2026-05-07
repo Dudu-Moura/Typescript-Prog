@@ -4,6 +4,7 @@ import { CreateLivro, UpdateLivro } from "../dtos/livro.dto";
 import { Livro } from "../generated/prisma/client";
 import { CreateEmprestimo } from "../dtos/emprestimo.dto";
 import { Emprestimo } from "../generated/prisma/client";
+import { NotFoundError } from "../errors/AppError";
 
 export class BibliotecaService{
     constructor(
@@ -34,7 +35,7 @@ export class BibliotecaService{
     async realizarEmprestimo(emprestimo: CreateEmprestimo): Promise<Emprestimo>{
         const livro =  await this.LivroRepo.findById(emprestimo.livroId);
 
-        if(!livro) throw new Error("Este livro não esta registrado");
+        if(!livro) throw new NotFoundError("Livro");
 
         if(livro.ativo == false) throw new Error("Este livro não esta ativo");
         
@@ -49,7 +50,7 @@ export class BibliotecaService{
     async devolverLivro(emprestimoId: number): Promise<Emprestimo>{
         const emprestimo = await this.EmprestimoRepo.findById(emprestimoId);
 
-        if(!emprestimo) throw new Error("Empréstimo não existente");
+        if(!emprestimo) throw new NotFoundError("Empréstimo");
 
         if(emprestimo.devolvido == true) throw new Error("Livro já devolvido");
 
@@ -69,7 +70,7 @@ export class BibliotecaService{
     async deletarLivro(livroId: number): Promise<Boolean>{
         const livro = await this.LivroRepo.findById(livroId);
 
-        if(!livro) throw new Error("Livro não encontrado");
+        if(!livro) throw new NotFoundError("Livro");
         
         if(livro.ativo == false) throw new Error("Livro já deletado");
         

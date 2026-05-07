@@ -1,6 +1,6 @@
 import { BibliotecaService } from "../service/biblioteca.service";
 import { NextFunction, Request, Response } from "express";
-import { CreateLivro } from "../types/livro";
+import { CreateLivro } from "../dtos/livro.dto";
 
 export class LivroController{
     constructor(private bibliotecaService: BibliotecaService){};

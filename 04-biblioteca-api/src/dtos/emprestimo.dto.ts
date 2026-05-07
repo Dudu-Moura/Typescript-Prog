@@ -1,11 +1,11 @@
 import { z } from 'zod'
 
-const CreateEmprestimoSchema = z.object({
+export const CreateEmprestimoSchema = z.object({
     nomeUsuario: z.string().min(2),
     livroId: z.number().int().positive()
 })
 
-const UpdateEmprestimoSchema = z.object({
+export const UpdateEmprestimoSchema = z.object({
     devolvido: z.boolean()
 })
 

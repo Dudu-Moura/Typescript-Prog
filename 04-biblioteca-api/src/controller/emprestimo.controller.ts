@@ -1,7 +1,7 @@
 import { BibliotecaService } from "../service/biblioteca.service";
 import { NextFunction, Request, Response } from "express";
-import { CreateEmprestimo } from "../types/emprestimo";
-import { UpdateLivro } from "../types/livro";
+import { CreateEmprestimo } from "../dtos/emprestimo.dto";
+import { UpdateLivro } from "../dtos/livro.dto";
 
 export class EmprestimoController{
     constructor(private bibliotecaService: BibliotecaService){};

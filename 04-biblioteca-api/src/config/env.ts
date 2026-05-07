@@ -12,7 +12,7 @@ function carregarEnv() {
 
     if (faltando.length > 0) {
         console.error(`Variáveis de ambiente faltando: ${faltando.join(', ')}`);
-        process.exit(1); // encerra antes de tentar subir
+        process.exit(1);
     }
 
     return variaveis as Record<keyof typeof variaveis, string>;
