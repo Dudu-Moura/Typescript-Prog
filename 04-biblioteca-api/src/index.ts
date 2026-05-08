@@ -4,6 +4,7 @@ import express  from "express"
 import { Request, Response, NextFunction } from "express";
 import livroRouter  from "./routes/livro.routes"
 import emprestimoRouter from "./routes/emprestimo.routes"
+import { errorMiddleware } from './middlewares/error.middleware';
 
 const app = express();
 
@@ -13,10 +14,7 @@ app.use('/livros', livroRouter);
 app.use('/emprestimos', emprestimoRouter);
 
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.message);
-    res.status(500).json({ erro: err.message });
-});
+app.use(errorMiddleware)
 
 app.listen(Number(env.PORT), () => {
     console.log(`Servidor rodando em http://localhost:${env.PORT}`)

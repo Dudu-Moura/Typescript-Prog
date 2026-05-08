@@ -6,7 +6,7 @@ Content-Type: application/json
     "titulo": "Clean Code",
     "autor": "Robert Martin",
     "descricao": "Livro de como escrever código limpo",
-    "isbn": "978-0132350884"
+    "isbn": "978-0132350"
 }
 
 ### Listar livros

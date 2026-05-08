@@ -7,12 +7,18 @@ export class AppError extends Error{
 
 export class NotFoundError extends AppError{
     constructor(resource: string){
-        super(`${resource} não disponível`, 400);
+        super(`${resource} não disponível`, 404);
     }
 }
 
 export class ConflictError extends AppError{
     constructor(message: string){
         super(message, 409);
+    }
+}
+
+export class UnauthorizedError extends AppError{
+    constructor(message: string){
+        super(message, 401);
     }
 }

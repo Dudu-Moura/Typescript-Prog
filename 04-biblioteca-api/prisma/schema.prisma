@@ -37,3 +37,11 @@ model Emprestimo {
   devolvido      Boolean   @default(false)
   livro          Livro     @relation(fields: [livroId], references: [id])
 }
+
+model Usuario {
+  id            Int         @id @default(autoincrement())
+  nome          String
+  email         String      @unique
+  senha         String
+  criadoEm      DateTime    @default(now())
+}

@@ -26,6 +26,7 @@ export class EmprestimoController{
                 res.status(404).json({ erro: "Emprestimo não existente" });
                 return;
             }  
+            
             res.json(emprestimo);
         } catch (ex) {
             next(ex);

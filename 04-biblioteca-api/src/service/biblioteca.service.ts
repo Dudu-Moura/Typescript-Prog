@@ -4,7 +4,8 @@ import { CreateLivro, UpdateLivro } from "../dtos/livro.dto";
 import { Livro } from "../generated/prisma/client";
 import { CreateEmprestimo } from "../dtos/emprestimo.dto";
 import { Emprestimo } from "../generated/prisma/client";
-import { NotFoundError } from "../errors/AppError";
+import { ConflictError, NotFoundError } from "../errors/AppError";
+import { config } from "dotenv";
 
 export class BibliotecaService{
     constructor(
@@ -37,9 +38,9 @@ export class BibliotecaService{
 
         if(!livro) throw new NotFoundError("Livro");
 
-        if(livro.ativo == false) throw new Error("Este livro não esta ativo");
+        if(livro.ativo == false) throw new ConflictError("Este livro não esta ativo");
         
-        if(livro.disponivel == false) throw new Error("Livro não esta disponivel");
+        if(livro.disponivel == false) throw new ConflictError("Livro não esta disponivel");
 
         livro.disponivel = false;
         await this.LivroRepo.update(livro.id, livro);
@@ -52,11 +53,11 @@ export class BibliotecaService{
 
         if(!emprestimo) throw new NotFoundError("Empréstimo");
 
-        if(emprestimo.devolvido == true) throw new Error("Livro já devolvido");
+        if(emprestimo.devolvido == true) throw new ConflictError("Livro já devolvido");
 
         const livroEmprestado = await this.LivroRepo.findById(emprestimo.livroId);
 
-        if(livroEmprestado?.disponivel == true) throw new Error("Livro não foi emprestado");
+        if(livroEmprestado?.disponivel == true) throw new ConflictError("Livro não foi emprestado");
 
 
         await this.LivroRepo.update(emprestimo.livroId, { disponivel: true });
@@ -72,9 +73,9 @@ export class BibliotecaService{
 
         if(!livro) throw new NotFoundError("Livro");
         
-        if(livro.ativo == false) throw new Error("Livro já deletado");
+        if(livro.ativo == false) throw new ConflictError("Livro já deletado");
         
-        if(livro!.disponivel == false) throw new Error("Não é possivel deletar livro emprestado");
+        if(livro!.disponivel == false) throw new ConflictError("Não é possivel deletar livro emprestado");
 
         try{
             await this.LivroRepo.delete(livroId);
