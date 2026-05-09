@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { env } from "../config/env";
 import { CreateLogin } from "../dtos/auth.dto";
 import { ConflictError } from "../errors/AppError";
 import { Usuario } from "../generated/prisma/client";
@@ -16,9 +17,12 @@ export class AuthService{
 
         const senha = await bcrypt.hash(dados.senha, 10);
 
-        const usuario = {...dados, senha};
-        await this.UsuarioRepo.create(usuario);
+        const usuario =  await this.UsuarioRepo.create({...dados, senha});
 
-        const token = jwt.sign()
+
+        const payload = { id: usuario.id , nome: usuario.nome, email: usuario.email }
+        const token = jwt.sign(payload , env.JWT_SECRET, { expiresIn: '7d' } );
+
+        return { token };
     }
 }
