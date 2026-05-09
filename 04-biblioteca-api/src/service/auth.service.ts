@@ -18,5 +18,7 @@ export class AuthService{
 
         const usuario = {...dados, senha};
         await this.UsuarioRepo.create(usuario);
+
+        const token = jwt.sign()
     }
 }
