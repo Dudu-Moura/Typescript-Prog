@@ -1,10 +1,9 @@
 import { prisma } from "../../lib/prisma";
-import { CreateLogin } from "../dtos/auth.dto";
+import { Register } from "../dtos/auth.dto";
 import { Usuario } from "../generated/prisma/client";
 import { z, ZodEmail } from 'zod'
 
 export class UsuarioRepository{
-
 
     async findByEmail(email: string): Promise<Usuario | null>{
         return prisma.usuario.findUnique({
@@ -12,9 +11,10 @@ export class UsuarioRepository{
         })
     };
 
-    async create(dados: CreateLogin): Promise<Usuario>{
+    async create(dados: Register): Promise<Usuario>{
         return prisma.usuario.create({
             data: dados
         })
     }
+    
 }
