@@ -9,9 +9,9 @@ export class AuthController{
 
     registrar = async (req: Request<{}, {}, Register>, res: Response, next: NextFunction): Promise<void> => {
         try{
-            const tokenRegistro = await this.AuthService.registrar(req.body);
+            const { token } = await this.AuthService.registrar(req.body);
 
-            res.status(201).json({ message: 'Usuário Criado!', token: { tokenRegistro }})
+            res.status(201).json({ message: 'Usuário Criado!', token })
         }
         catch(ex){
             next(ex);
@@ -20,9 +20,9 @@ export class AuthController{
 
     login = async (req: Request<{}, {}, Login>, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const token = await this.AuthService.login(req.body);
+            const { token }  = await this.AuthService.login(req.body);
 
-            res.status(200).json({ message: 'Logado', token: { token } });
+            res.status(200).json({ message: 'Logado', token });
         } catch (ex) {
             next(ex);
         }

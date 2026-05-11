@@ -31,11 +31,12 @@ model Livro {
 model Emprestimo {
   id             Int       @id @default(autoincrement())
   livroId        Int
-  nomeUsuario    String
+  usuarioId      Int
   dataEmprestimo DateTime  @default(now())
   dataDevolucao  DateTime?
   devolvido      Boolean   @default(false)
   livro          Livro     @relation(fields: [livroId], references: [id])
+  usuario        Usuario   @relation(fields: [usuarioId], references: [id])
 }
 
 model Usuario {
@@ -44,4 +45,5 @@ model Usuario {
   email         String      @unique
   senha         String
   criadoEm      DateTime    @default(now())
+  emprestimos   Emprestimo[]
 }

@@ -24,12 +24,12 @@ Acompanhe o progresso dos módulos de estudo:
 | ✅ | **Node.js Básico** | Módulos nativos: `fs`, `http`, variáveis de ambiente |
 | ✅ | **HTTP Básico** | Verbos, status codes, headers, REST |
 | ✅ | **Express** | Roteamento, middlewares, controllers |
+| ✅ | **Estrutura de Projeto** | Rotas, controllers, services, repositories |
 | ✅ | **Variáveis de Ambiente** | `.env`, boas práticas de segurança |
 | ✅ | **Banco de Dados** | SQL básico + Prisma ORM |
-| ⬜ | **Validação de Dados** | Zod integrado com TypeScript |
-| ⬜ | **Tratamento de Erros** | Middleware de erro, erros customizados |
-| ⬜ | **Autenticação** | JWT, sessions, bcrypt |
-| ⬜ | **Estrutura de Projeto** | Rotas, controllers, services, repositories |
+| ✅ | **Validação de Dados** | Zod integrado com TypeScript |
+| ✅ | **Tratamento de Erros** | Middleware de erro, erros customizados |
+| ✅ | **Autenticação** | JWT, sessions, bcrypt |
 | ⬜ | **NestJS** | Framework opinativo para Node.js |
 | ⬜ | **Testes com Jest** | Unit, integration e e2e tests |
 | ⬜ | **Docker** | Containers, imagens, compose |
@@ -119,6 +119,6 @@ npx tsc && node dist/exercicio.js
 ## 📈 Progresso
 
 ```
-[███████░░░░░░░░░]  7 / 16 módulos concluídos
+[████████████░░░░]  12 / 16 módulos concluídos
 ```
 

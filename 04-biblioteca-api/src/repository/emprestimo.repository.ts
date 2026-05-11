@@ -4,9 +4,12 @@ import { prisma } from "../../lib/prisma";
 
 export class EmprestimoRepository {
 
-    async findAll(devolvido?: boolean): Promise<Emprestimo[]>{
+    async findAll(userId: number, devolvido?: boolean): Promise<Emprestimo[]>{
         return prisma.emprestimo.findMany({
-            where: devolvido !== undefined ? { devolvido } : undefined
+            where:{ 
+                usuarioId: userId,
+                devolvido 
+            }
         });
     }
 

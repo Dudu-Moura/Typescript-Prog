@@ -1,7 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import { Register } from "../dtos/auth.dto";
 import { Usuario } from "../generated/prisma/client";
-import { z, ZodEmail } from 'zod'
+import { z } from 'zod'
 
 export class UsuarioRepository{
 
@@ -15,6 +15,5 @@ export class UsuarioRepository{
         return prisma.usuario.create({
             data: dados
         })
-    }
-    
+    }   
 }

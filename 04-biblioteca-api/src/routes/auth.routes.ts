@@ -3,14 +3,12 @@ import { validate } from "../middlewares/validate.middleware";
 import { AuthController } from "../controller/auth.controller";
 import { AuthService } from "../service/auth.service";
 import { UsuarioRepository } from "../repository/usuario.repository";
-
-const repo = new UsuarioRepository()
-const service = new AuthService(repo)
-const controller = new AuthController(service)
+import { LoginSchema, RegisterSchema } from "../dtos/auth.dto";
+import { authController } from "../container";
 
 const router = Router();
 
-router.post('/registrar', validate, controller.registrar);
-router.post('/login', validate, controller.login);
+router.post('/registrar', validate(RegisterSchema), authController.registrar);
+router.post('/login', validate(LoginSchema), authController.login);
 
 export default router;

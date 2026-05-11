@@ -28,9 +28,11 @@ export class AuthService{
 
     async login(dados: Login): Promise<{ token: string }>{
         const user = await this.UsuarioRepo.findByEmail(dados.email);
+        if(!user) throw new UnauthorizedError('Email ou senha incorreto(s)');
+        
         const userPassword = await bcrypt.compare(dados.senha, user!.senha)
+        if(!userPassword) throw new UnauthorizedError('Email ou senha incorreto(s)');
 
-        if(!user || !userPassword) throw new UnauthorizedError('Email ou senha incorreto(s)');
         
         const payload = { id: user.id , nome: user.nome, email: user.email }
         const token = jwt.sign(payload , env.JWT_SECRET, { expiresIn: '7d' } );

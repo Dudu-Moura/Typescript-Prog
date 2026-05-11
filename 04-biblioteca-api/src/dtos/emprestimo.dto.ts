@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 export const CreateEmprestimoSchema = z.object({
-    nomeUsuario: z.string().min(2),
     livroId: z.number().int().positive()
 })
 

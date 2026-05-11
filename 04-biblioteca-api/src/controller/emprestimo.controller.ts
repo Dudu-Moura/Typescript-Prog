@@ -10,7 +10,7 @@ export class EmprestimoController{
     listar = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const devolvido = req.query.devolvido === undefined ? undefined : req.query.devolvido === 'true';
-            const emprestimo = await this.bibliotecaService.listarEmprestimos(devolvido);
+            const emprestimo = await this.bibliotecaService.listarEmprestimos(req.usuario!.id , devolvido);
             res.json(emprestimo);
         } catch (ex) {
             next(ex);
@@ -35,7 +35,7 @@ export class EmprestimoController{
 
     criar = async (req: Request< {}, {}, CreateEmprestimo >, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const emprestimo = await this.bibliotecaService.realizarEmprestimo(req.body);
+            const emprestimo = await this.bibliotecaService.realizarEmprestimo({...req.body, usuarioId: req.usuario!.id});
             res.status(201).json(emprestimo);
         } catch (ex) {
             next(ex);
@@ -45,7 +45,7 @@ export class EmprestimoController{
     devolver = async (req: Request< { id: string }, {}, UpdateLivro >, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = Number(req.params.id);
-            await this.bibliotecaService.devolverLivro(id);
+            await this.bibliotecaService.devolverLivro(req.usuario!.id ,id);
             res.status(200).json({ message: 'Empréstimo devolvido' })
         } catch (ex) {
             next(ex)

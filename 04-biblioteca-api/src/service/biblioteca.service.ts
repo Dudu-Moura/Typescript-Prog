@@ -4,8 +4,10 @@ import { CreateLivro, UpdateLivro } from "../dtos/livro.dto";
 import { Livro } from "../generated/prisma/client";
 import { CreateEmprestimo } from "../dtos/emprestimo.dto";
 import { Emprestimo } from "../generated/prisma/client";
-import { ConflictError, NotFoundError } from "../errors/AppError";
+import { ConflictError, NotFoundError, UnauthorizedError } from "../errors/AppError";
 import { config } from "dotenv";
+
+type CreateEmprestimoInterno = CreateEmprestimo & { usuarioId: number }; // livroId + usuarioId
 
 export class BibliotecaService{
     constructor(
@@ -17,8 +19,8 @@ export class BibliotecaService{
         return this.LivroRepo.findAll(disponivel);
     }
 
-    async listarEmprestimos(devolvido?: boolean): Promise<Emprestimo[]>{
-        return this.EmprestimoRepo.findAll(devolvido);
+    async listarEmprestimos(userId: number, devolvido?: boolean): Promise<Emprestimo[]>{
+        return this.EmprestimoRepo.findAll(userId, devolvido);
     }
 
     async buscarLivroPorId(livroId: number): Promise<Livro | null>{
@@ -33,7 +35,7 @@ export class BibliotecaService{
         return this.LivroRepo.create(livro);
     }
 
-    async realizarEmprestimo(emprestimo: CreateEmprestimo): Promise<Emprestimo>{
+    async realizarEmprestimo(emprestimo: CreateEmprestimoInterno): Promise<Emprestimo>{
         const livro =  await this.LivroRepo.findById(emprestimo.livroId);
 
         if(!livro) throw new NotFoundError("Livro");
@@ -48,17 +50,18 @@ export class BibliotecaService{
         return this.EmprestimoRepo.create(emprestimo);
     }
 
-    async devolverLivro(emprestimoId: number): Promise<Emprestimo>{
+    async devolverLivro(usuarioId: number, emprestimoId: number): Promise<Emprestimo>{
         const emprestimo = await this.EmprestimoRepo.findById(emprestimoId);
 
         if(!emprestimo) throw new NotFoundError("Empréstimo");
+
+        if(emprestimo.usuarioId != usuarioId) throw new UnauthorizedError('Sem permissão');
 
         if(emprestimo.devolvido == true) throw new ConflictError("Livro já devolvido");
 
         const livroEmprestado = await this.LivroRepo.findById(emprestimo.livroId);
 
         if(livroEmprestado?.disponivel == true) throw new ConflictError("Livro não foi emprestado");
-
 
         await this.LivroRepo.update(emprestimo.livroId, { disponivel: true });
         await this.EmprestimoRepo.update(emprestimoId, {

@@ -1,6 +1,7 @@
 ### Criar livro
 POST http://localhost:3000/livros
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NDU4MTE3LCJleHAiOjE3NzkwNjI5MTd9.vEE2zYkzMasmdEvmInoWrN2TWvi61ZQBAxJa-U0Dk7k
 
 {
     "titulo": "Clean Code",
@@ -21,32 +22,60 @@ GET http://localhost:3000/livros?disponivel=true
 ### Deletar livro
 DELETE http://localhost:3000/livros/1
 
-### Criar empréstimo
-POST http://localhost:3000/emprestimos
+### Registrar
+POST http://localhost:3000/auth/registrar
 Content-Type: application/json
 
 {
-    "livroId": 1,
-    "nomeUsuario": "Ana"
+    "nome": "Eduardo",
+    "email": "eduardo@email.com",
+    "senha": "senha123"
 }
 
-### Listar empréstimos
-GET http://localhost:3000/emprestimos/
+### Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
 
-### Buscar empréstimos por ID
-GET http://localhost:3000/emprestimos/1
+{
+    "email": "eduardo@email.com",
+    "senha": "senha123"
+}
 
-### Listar empréstimos não devolvidos
-GET http://localhost:3000/emprestimos?devolvido=false
+### Criar empréstimo com token
+POST http://localhost:3000/emprestimos
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NDU4MTE3LCJleHAiOjE3NzkwNjI5MTd9.vEE2zYkzMasmdEvmInoWrN2TWvi61ZQBAxJa-U0Dk7k
+
+{
+    "livroId": 3
+}
+
+### Listar empréstimos com token
+GET http://localhost:3000/emprestimos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NDU4MTE3LCJleHAiOjE3NzkwNjI5MTd9.vEE2zYkzMasmdEvmInoWrN2TWvi61ZQBAxJa-U0Dk7k
 
 ### Devolver empréstimo
-PATCH http://localhost:3000/emprestimos/2/devolver
+PATCH http://localhost:3000/emprestimos/3/devolver
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NDU4MTE3LCJleHAiOjE3NzkwNjI5MTd9.vEE2zYkzMasmdEvmInoWrN2TWvi61ZQBAxJa-U0Dk7k
 
-### Tentar criar empréstimo em livro indisponível
+### Tentar criar empréstimo sem token
 POST http://localhost:3000/emprestimos
 Content-Type: application/json
 
 {
-    "livroId": 1,
-    "nomeUsuario": "Carlos"
+    "livroId": 1
 }
+
+### Registrar segundo usuário
+POST http://localhost:3000/auth/registrar
+Content-Type: application/json
+
+{
+    "nome": "Ana",
+    "email": "ana@email.com",
+    "senha": "senha123"
+}
+
+### Tentar devolver empréstimo do Eduardo com token da Ana
+PATCH http://localhost:3000/emprestimos/4/devolver
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwibm9tZSI6IkFuYSIsImVtYWlsIjoiYW5hQGVtYWlsLmNvbSIsImlhdCI6MTc3ODQ1ODIwNiwiZXhwIjoxNzc5MDYzMDA2fQ.e09VABqIdFExf4ysopOzR0NWQL1FDwJZs3cUY4OSGWU
