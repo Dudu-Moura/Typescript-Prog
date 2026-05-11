@@ -105,10 +105,10 @@ JWT_EXPIRES_IN=7d
 
 | Método | Rota          | Descrição                          | Auth          |
 |--------|---------------|------------------------------------|---------------|
-| GET    | `/livros`     | Listar livros (`?disponivel=true`) | Em progresso  |
-| GET    | `/livros/:id` | Buscar livro por ID                | Em progresso  |
-| POST   | `/livros`     | Cadastrar livro                    | Em progresso  |
-| DELETE | `/livros/:id` | Remover livro (soft delete)        | Em progresso  |
+| GET    | `/livros`     | Listar livros (`?disponivel=true`) | Não  |
+| GET    | `/livros/:id` | Buscar livro por ID                | Não  |
+| POST   | `/livros`     | Cadastrar livro                    | Sim  |
+| DELETE | `/livros/:id` | Remover livro (soft delete)        | Sim  |
 
 **Cadastrar livro:**
 ```json
@@ -126,10 +126,10 @@ JWT_EXPIRES_IN=7d
 
 | Método | Rota                          | Descrição                           | Auth         |
 |--------|-------------------------------|-------------------------------------|--------------|
-| GET    | `/emprestimos`                | Listar (`?devolvido=false`)         | Em progresso |
-| GET    | `/emprestimos/:id`            | Buscar empréstimo por ID            | Em progresso |
-| POST   | `/emprestimos`                | Realizar empréstimo                 | Em progresso |
-| PATCH  | `/emprestimos/:id/devolver`   | Registrar devolução                 | Em progresso |
+| GET    | `/emprestimos`                | Listar (`?devolvido=false`)         | Sim |
+| GET    | `/emprestimos/:id`            | Buscar empréstimo por ID            | Sim |
+| POST   | `/emprestimos`                | Realizar empréstimo                 | Sim |
+| PATCH  | `/emprestimos/:id/devolver`   | Registrar devolução                 | Sim |
 
 **Realizar empréstimo:**
 ```json
@@ -164,6 +164,6 @@ A API retorna erros padronizados:
 - [x] CRUD de livros com soft delete
 - [x] Registro e devolução de empréstimos
 - [x] Autenticação com JWT e bcrypt
-- [ ] Middleware JWT nas rotas protegidas
+- [x] Middleware JWT nas rotas protegidas
 - [ ] Migração para NestJS
 - [ ] Containerização com Docker

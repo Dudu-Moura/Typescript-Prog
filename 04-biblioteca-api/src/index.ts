@@ -1,13 +1,18 @@
 import 'dotenv/config'
 import { env } from "./config/env";
 import express  from "express"
-import { Request, Response, NextFunction } from "express";
+import cors from "cors"
 import livroRouter  from "./routes/livro.routes"
 import emprestimoRouter from "./routes/emprestimo.routes"
 import { errorMiddleware } from './middlewares/error.middleware';
 import authRouter from "./routes/auth.routes"
 
 const app = express();
+
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    credentials: true
+}));
 
 app.use(express.json());
 

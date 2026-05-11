@@ -7,7 +7,7 @@ import { Emprestimo } from "../generated/prisma/client";
 import { ConflictError, NotFoundError, UnauthorizedError } from "../errors/AppError";
 import { config } from "dotenv";
 
-type CreateEmprestimoInterno = CreateEmprestimo & { usuarioId: number }; // livroId + usuarioId
+export type CreateEmprestimoInterno = CreateEmprestimo & { usuarioId: number };
 
 export class BibliotecaService{
     constructor(

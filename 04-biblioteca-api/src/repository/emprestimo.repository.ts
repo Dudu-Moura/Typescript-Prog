@@ -1,6 +1,7 @@
 import { CreateEmprestimo } from "../dtos/emprestimo.dto";
 import { Emprestimo } from "../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { CreateEmprestimoInterno } from "../service/biblioteca.service";
 
 export class EmprestimoRepository {
 
@@ -19,7 +20,7 @@ export class EmprestimoRepository {
         });
     }
 
-    async create(dados: CreateEmprestimo): Promise<Emprestimo>{
+    async create(dados: CreateEmprestimoInterno): Promise<Emprestimo>{
         return prisma.emprestimo.create({
             data: dados
         });
