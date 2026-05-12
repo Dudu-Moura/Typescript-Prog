@@ -1,0 +1,57 @@
+### Registrar
+POST http://localhost:3000/auth/registrar
+Content-Type: application/json
+
+{
+    "nome": "Eduardo",
+    "email": "eduardo@email.com",
+    "senha": "senha123"
+}
+
+### Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "eduardo@email.com",
+    "senha": "senha123"
+}
+
+### Criar livro
+POST http://localhost:3000/livros
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NTUzNTU0LCJleHAiOjE3NzkxNTgzNTR9.u6S-kTV85wSvkfUK9MbBRLDToHgpCNNR0ZaeHEtrgkw
+
+{
+    "titulo": "Clean Code",
+    "autor": "Robert Martin",
+    "descricao": "Livro sobre código limpo",
+    "isbn": "9780132350884"
+}
+
+### Listar livros
+GET http://localhost:3000/livros
+
+### Buscar livro por id
+GET http://localhost:3000/livros/5
+
+### Criar empréstimo
+POST http://localhost:3000/emprestimos
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NTUzNTU0LCJleHAiOjE3NzkxNTgzNTR9.u6S-kTV85wSvkfUK9MbBRLDToHgpCNNR0ZaeHEtrgkw
+
+{
+    "livroId": 5
+}
+
+### Listar empréstimos
+GET http://localhost:3000/emprestimos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NTUzNTU0LCJleHAiOjE3NzkxNTgzNTR9.u6S-kTV85wSvkfUK9MbBRLDToHgpCNNR0ZaeHEtrgkw
+
+### Devolver empréstimo
+PATCH http://localhost:3000/emprestimos/6/devolver
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NTUzNTU0LCJleHAiOjE3NzkxNTgzNTR9.u6S-kTV85wSvkfUK9MbBRLDToHgpCNNR0ZaeHEtrgkw
+
+### Deletar livro
+DELETE http://localhost:3000/livros/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tZSI6IkVkdWFyZG8iLCJlbWFpbCI6ImVkdWFyZG9AZW1haWwuY29tIiwiaWF0IjoxNzc4NTUzNTU0LCJleHAiOjE3NzkxNTgzNTR9.u6S-kTV85wSvkfUK9MbBRLDToHgpCNNR0ZaeHEtrgkw
