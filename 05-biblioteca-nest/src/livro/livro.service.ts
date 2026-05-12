@@ -12,7 +12,9 @@ export class LivroService {
     }
 
     async buscarLivroPorId(livroId: number): Promise<Livro | null>{
-        return this.LivroRepo.findById(livroId);
+        const livro = await this.LivroRepo.findById(livroId);
+        if(!livro) throw new ConflictException('Livro não encontrado');
+        return livro;
     }
 
     async registrarLivro(livro: CreateLivroDTO): Promise<Livro>{

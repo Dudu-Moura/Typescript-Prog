@@ -20,12 +20,12 @@ export class AuthService {
 
         const payload = { id: usuario.id , nome: usuario.nome, email: usuario.email };
 
-        const token = await this.JWTService.signAsync(payload);
+        const token = await this.JWTService.sign(payload);
 
         return { token };
     }
 
-        async login(dados: LoginDTO): Promise<{ token: string }>{
+    async login(dados: LoginDTO): Promise<{ token: string }>{
         const user = await this.UserRepository.findByEmail(dados.email);
         if(!user) throw new UnauthorizedException('Email ou senha incorreto(s)');
         
@@ -34,7 +34,7 @@ export class AuthService {
 
         
         const payload = { id: user.id , nome: user.nome, email: user.email }
-        const token = await this.JWTService.signAsync(payload);
+        const token = await this.JWTService.sign(payload);
 
         return { token };
     }

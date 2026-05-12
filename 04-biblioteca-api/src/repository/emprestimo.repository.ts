@@ -3,6 +3,7 @@ import { Emprestimo } from "../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { CreateEmprestimoInterno } from "../service/biblioteca.service";
 
+
 export class EmprestimoRepository {
 
     async findAll(userId: number, devolvido?: boolean): Promise<Emprestimo[]>{
