@@ -30,8 +30,8 @@ Acompanhe o progresso dos módulos de estudo:
 | ✅ | **Validação de Dados** | Zod integrado com TypeScript |
 | ✅ | **Tratamento de Erros** | Middleware de erro, erros customizados |
 | ✅ | **Autenticação** | JWT, sessions, bcrypt |
-| ⬜ | **NestJS** | Framework opinativo para Node.js |
-| ⬜ | **Testes com Jest** | Unit, integration e e2e tests |
+| ✅ | **NestJS** | Framework opinativo para Node.js |
+| ✅ | **Testes com Jest** | Unit e mocks |
 | ⬜ | **Docker** | Containers, imagens, compose |
 | ⬜ | **Decorators** | Metadata, class decorators, experimentais |
 
@@ -119,6 +119,6 @@ npx tsc && node dist/exercicio.js
 ## 📈 Progresso
 
 ```
-[████████████░░░░]  12 / 16 módulos concluídos
+[██████████████░░]  14 / 16 módulos concluídos
 ```
 
