@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseBoolPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseBoolPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { LivroService } from './livro.service';
 import { CreateLivroDTO } from './dto/livro.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';

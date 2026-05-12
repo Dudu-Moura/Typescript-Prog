@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LivroService } from './livro.service';
 import { LivroRepository } from './livro.repository';
-import { boolean } from 'zod';
 
 describe('LivroService', () => {
   let service: LivroService;

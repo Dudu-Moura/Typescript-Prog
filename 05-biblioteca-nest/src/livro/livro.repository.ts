@@ -1,4 +1,4 @@
-import { CreateLivroDTO , UpdateLivroDTO } from "../livro/dto/livro.dto";
+import { CreateLivroDTO } from "../livro/dto/livro.dto";
 import { Livro } from "../generated/prisma/client"
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";

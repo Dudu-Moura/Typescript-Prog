@@ -7,7 +7,6 @@ import { AuthService } from './auth.service';
 import { UserRepository } from './user.repository';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { serialize } from 'v8';
 
 
 describe('AuthService', () => {
