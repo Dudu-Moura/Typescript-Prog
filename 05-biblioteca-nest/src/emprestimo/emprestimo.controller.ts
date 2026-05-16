@@ -2,7 +2,8 @@ import { Body, Controller, Get, Param, ParseBoolPipe, Patch, Post, Query, Req, U
 import { EmprestimoService } from './emprestimo.service';
 import { CreateEmprestimoDTO } from './dto/emprestimo.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-
+import { CurrentUser } from 'common/decorators/current_user.decorator';
+import { Usuario } from '@prisma/client';
 @Controller('emprestimos')
 @UseGuards(JwtGuard)
 export class EmprestimoController {
@@ -19,12 +20,12 @@ export class EmprestimoController {
     }
 
     @Post()
-    async criar(@Body() Emprestimo: CreateEmprestimoDTO, @Req() request: any) {
-        return this.EmprestimoService.realizarEmprestimo({ ...Emprestimo , usuarioId: request.user.id });
+    async criar(@Body() Emprestimo: CreateEmprestimoDTO, @CurrentUser() usuario: Usuario) {
+        return this.EmprestimoService.realizarEmprestimo({ ...Emprestimo , usuarioId: usuario.id });
     }
 
     @Patch(':id/devolver')
-    async devolver(@Req() request: any,@Param('id') id: string) {
-        return this.EmprestimoService.devolverLivro(request.user.id , Number(id));
+    async devolver(@CurrentUser() usuario: Usuario,@Param('id') id: string) {
+        return this.EmprestimoService.devolverLivro(usuario.id , Number(id));
     }
 }

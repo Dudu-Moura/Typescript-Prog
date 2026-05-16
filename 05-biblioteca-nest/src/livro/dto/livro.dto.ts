@@ -20,7 +20,7 @@ export class CreateLivroDTO {
 
     @IsString()
     @MinLength(10)
-    @MaxLength(13)
+    @MaxLength(14)
     isbn!: string;
 }
 

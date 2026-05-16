@@ -3,12 +3,15 @@ import { UserRepository } from './user.repository';
 import { LoginDTO, RegisterDTO } from './dto/auth.dto';
 import bcrypt from "bcryptjs";
 import { JwtService } from '@nestjs/jwt';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
     constructor(private UserRepository: UserRepository, private JWTService: JwtService){};
+    private readonly logger = new Logger(AuthService.name);
 
     async registrar(dados: RegisterDTO): Promise<{ token: string }>{
+        this.logger.debug(`Tentativa de registro - ${dados.email}`);
 
         const userEmail = await this.UserRepository.findByEmail(dados.email);
 
