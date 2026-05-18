@@ -23,35 +23,34 @@ enum AppointmentStatus {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        Int   @id @default(uuid())
   name      String
+  cpf       String
   email     String   @unique
   password  String
-  phone     String?
   role      Role     @default(PATIENT)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   appointments Appointment[]
 
-  @@map("users")
+  @@map("user")
 }
 
 model Medic {
   id           String   @id @default(uuid())
+  userId       Int      @unique
   name         String
   email        String   @unique
   password     String
-  phone        String?
   crm          String   @unique
   specialty    String
-  bio          String?
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 
   appointments Appointment[]
 
-  @@map("medics")
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("medic")
 }
 
 model Appointment {
@@ -63,11 +62,11 @@ model Appointment {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
-  userId  String
-  medicId String
+  userId  Int
+  medicId Int
 
   user  User  @relation(fields: [userId], references: [id])
   medic Medic @relation(fields: [medicId], references: [id])
 
-  @@map("appointments")
+  @@map("appointment")
 }
