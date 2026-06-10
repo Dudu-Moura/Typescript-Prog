@@ -6,13 +6,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
   ADMIN
   PATIENT
+  MEDIC
 }
 
 enum AppointmentStatus {
@@ -23,44 +25,39 @@ enum AppointmentStatus {
 }
 
 model User {
-  id        Int   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   name      String
-  cpf       String
+  cpf       String   @unique
   email     String   @unique
   password  String
   role      Role     @default(PATIENT)
   createdAt DateTime @default(now())
 
   appointments Appointment[]
+  medic        Medic?
 
   @@map("user")
 }
 
 model Medic {
-  id           String   @id @default(uuid())
-  userId       Int      @unique
-  name         String
-  email        String   @unique
-  password     String
-  crm          String   @unique
-  specialty    String
-  createdAt    DateTime @default(now())
+  id        Int    @id @default(autoincrement())
+  userId    Int    @unique
+  crm       String @unique
+  specialty String
 
   appointments Appointment[]
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("medic")
 }
 
 model Appointment {
-  id          String            @id @default(uuid())
+  id          Int               @id @default(autoincrement())
   scheduledAt DateTime
-  duration    Int               // in minutes
   status      AppointmentStatus @default(PENDING)
   notes       String?
   createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
 
   userId  Int
   medicId Int

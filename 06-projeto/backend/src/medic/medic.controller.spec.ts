@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MedicsController } from './medics.controller';
-import { MedicsService } from './medics.service';
+import { MedicController } from './medic.controller';
+import { MedicService } from './medic.service';
 
-describe('MedicsController', () => {
+describe('MedicController', () => {
   let controller: MedicsController;
 
   beforeEach(async () => {
