@@ -16,8 +16,19 @@ export class MedicService {
 
         const medics = await this.medicRepository.findAll();
         this.logger.log(`Medics listed - ${medics.length}`);
+        const users = await this.userService.getUsers();
+        const usersMap = new Map(users.map(user => [user.id, user.name]));
 
-        return medics.map();
+        const medicList = medics.map(medic => {
+            const name = usersMap.get(medic.userId);
+            return  {
+                name: name!,
+                crm: medic.crm,
+                specialty: medic.specialty
+            }
+        })
+
+        return medicList;
     }
 
     async getMedicById(id: number): Promise<MedicList | null>{
@@ -50,7 +61,7 @@ export class MedicService {
         return medic;
     }
 
-    async createMedic(userData: CreateUserDTO, medicData: CreateMedicDTO): Promise<Medic>{
+    async createMedic(userData: CreateUserDTO, medicData: CreateMedicDTO): Promise<{user: User, medic: Medic}>{
         this.logger.debug(`Creating medic - ${medicData.crm}, ${userData.email}`);
 
         const medicDB = await this.medicRepository.findByCRM(medicData.crm);
@@ -61,9 +72,9 @@ export class MedicService {
         }
 
         const password = await bcrypt.hash(userData.password, 10);
-        const medic = await this.medicRepository.create({...userData, password}, medicData);
+        const { user, medic } = await this.medicRepository.create({...userData, password}, medicData);
         
         this.logger.log(`Medic created - ID: ${medic.id}, CRM: ${medic.crm}`);
-        return medic;
+        return { user, medic };
     }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Medic } from "@prisma/client";
+import { Medic, User } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateMedicDTO } from "./dto/medic.dto";
 import { UserRepository } from "src/user/user.repository";
@@ -25,15 +25,17 @@ export class MedicRepository{
         });
     }
 
-    async create(userData: CreateUserDTO, medicData: CreateMedicDTO): Promise<Medic>{
+    async create(userData: CreateUserDTO, medicData: CreateMedicDTO): Promise<{user: User, medic: Medic}>{
         const user = await this.prisma.user.create({
             data: userData
         });
 
         const userId = user.id;
         
-        return this.prisma.medic.create({
+        const medic = await this.prisma.medic.create({
             data: {...medicData, userId}
         });
+
+        return { user , medic };
     }
 }

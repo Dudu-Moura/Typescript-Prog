@@ -7,8 +7,10 @@ import { CreateAppointmentDTO } from "./dto/appointment.dto";
 export class AppointmentRepository{
     constructor(private prisma: PrismaService){};
 
-    async findAll(): Promise<Appointment[]>{
-        return this.prisma.appointment.findMany();
+    async findAll(id?: number): Promise<Appointment[]>{
+        return this.prisma.appointment.findMany({
+            where: { id }
+        });
     }
 
     async findById(id: number): Promise<Appointment | null>{
@@ -33,6 +35,13 @@ export class AppointmentRepository{
         return this.prisma.appointment.update({
             data: { status },
             where: { id }
+        })
+    }
+
+    async cancelAppointment(id: number): Promise<Appointment>{
+        return this.prisma.appointment.update({
+            where: { id },
+            data: { status: 'CANCELLED' }
         })
     }
 }

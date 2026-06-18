@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { User } from "@prisma/client" 
 import { CreateUserDTO, UpdateUserDTO } from "./dto/user.dto";
+import { Roles } from "src/auth/guards/role.guard";
 
 
 @Injectable()
@@ -18,12 +19,6 @@ export class UserRepository{
         });
     };
 
-    async findByCPF(cpf: string): Promise<User | null>{
-        return this.prisma.user.findUnique({
-            where: { cpf }
-        })
-    }
-
     async findByEmail(email: string): Promise<User | null>{
         return this.prisma.user.findUnique({
             where: { email }
@@ -36,11 +31,11 @@ export class UserRepository{
         });
     };
 
-    async update(data: UpdateUserDTO): Promise<User> {
-        const user = await this.findByCPF(data.cpf!);
+    async update(data: Partial<User>): Promise<User> {
+        const user = await this.findByEmail(data.email!);
 
         return await this.prisma.user.update({
-            data: {...user, data}
+            data: { ...user, data } 
         })
     }
 

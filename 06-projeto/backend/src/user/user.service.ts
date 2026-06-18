@@ -36,15 +36,6 @@ export class UserService {
         };
     }
 
-    async getUserByCPF(cpf: string): Promise<User | null>{
-        const user = await this.UserRepository.findByCPF(cpf);
-        if (!user){
-            throw new NotFoundException(`User not found`);
-        }
-
-        return user;
-    }
-
     async getUserByEmail(email: string): Promise<User | null>{
         const user = await this.UserRepository.findByEmail(email);
         if (!user){
@@ -57,7 +48,7 @@ export class UserService {
     async createUser(data: CreateUserDTO): Promise<User>{
         this.logger.debug(`Creating user... ${data.name}`);
 
-        const user = await this.UserRepository.findByCPF(data.cpf);
+        const user = await this.UserRepository.findByEmail(data.email);
         
         if(user){
             this.logger.warn(`User is already registered in database`);
