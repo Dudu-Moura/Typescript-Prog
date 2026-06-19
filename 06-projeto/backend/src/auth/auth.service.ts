@@ -6,7 +6,6 @@ import { CreateUserDTO } from "src/user/dto/user.dto";
 import bcrypt from "bcryptjs";
 import { CreateMedicDTO } from "src/medic/dto/medic.dto";
 import { MedicService } from "src/medic/medic.service";
-import { use } from "passport";
 
 @Injectable()
 export class AuthService{

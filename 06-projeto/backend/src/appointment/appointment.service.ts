@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { AppointmentRepository } from './appointment.repository';
-import { Appointment, AppointmentStatus, Medic, User } from '@prisma/client';
+import { Appointment, AppointmentStatus, Medic, Role, User } from '@prisma/client';
 import { AppointmentSummary, CreateAppointmentDTO } from './dto/appointment.dto';
 import { UserService } from 'src/user/user.service';
 import { MedicService } from 'src/medic/medic.service';
@@ -18,15 +18,44 @@ export class AppointmentService {
     constructor(private appointmentRepository: AppointmentRepository, private userService: UserService, private medicService: MedicService){};
     private readonly logger = new Logger();
 
-    async getAppointments(id?: number): Promise<Appointment[]>{
-        this.logger.debug(`Listing all appointments: ${id}`);
-        const appointments = await this.appointmentRepository.findAll(id);
+    async getAllAppointments(){
+        this.logger.debug(`Listing all appointments`);
 
+        const appointments = await this.appointmentRepository.findAll();
         this.logger.log(`Appointments listed - ${appointments.length}`)
         return appointments;
     }
 
-    async getAppointmentById(id: number): Promise<AppointmentSummary | null>{
+    async getPatientAppointments(userId: number){
+        const patientAppointments = await this.appointmentRepository.findAll(userId);
+        const medics = await this.medicService.getMedics();
+        const medicMap = new Map(medics.map(medic => [medic.id, medic]));
+
+        return patientAppointments.map(appointment => {
+            const medic = medicMap.get(appointment.medicId);
+            return {
+                ...appointment,
+                medicName: medic?.name,
+                medicSpecialty: medic?.specialty
+            };
+        });
+    }
+
+    async getMedicAppointments(medicUserId: number){
+        const medics = await this.medicService.getMedics();
+        const medic = medics.find(medic => medic.userId == medicUserId);
+        const medicAppointments = await this.appointmentRepository.findByMedic(medic!.id);
+
+        const patients = await this.userService.getUsers();
+        const patientMap = new Map(patients.map(patient => [patient.id, patient.name]));
+
+        return medicAppointments.map(appointment => ({
+            ...appointment,
+            patientName: patientMap.get(appointment.userId)
+        }));
+    }
+
+    async getAppointmentById(id: number){
         this.logger.debug(`Getting appointment - ${id}`);
         const appointment = await this.appointmentRepository.findById(id);
 
@@ -38,13 +67,7 @@ export class AppointmentService {
         const medic = await this.medicService.getMedicById(appointment.medicId);
 
         this.logger.log(`Appointment found - ${appointment.id}, ${appointment.status}`);
-        return {
-            scheduledDate: appointment.scheduledAt.getDay(),
-            scheduledHour: appointment.scheduledAt.getHours(),
-            status: appointment.status,
-            medicName: medic!.name,
-            medicSpecialty: medic!.specialty
-        };
+        return { ...appointment, name: medic.name, specialty: medic.specialty };
     }
 
     async createAppointment(appointmentData: CreateAppointmentDTO, userEmail: string, medicCRM: string): Promise<Appointment>{

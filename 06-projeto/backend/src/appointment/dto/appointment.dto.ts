@@ -13,6 +13,9 @@ export class CreateAppointmentDTO{
     @IsString()
     @MinLength(5)
     notes!: string
+
+    @IsString()
+    crm!: string
 }
 
 export class UpdateAppointmentDTO extends PartialType(CreateAppointmentDTO){};

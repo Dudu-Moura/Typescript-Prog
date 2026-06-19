@@ -2,7 +2,7 @@ import { ConflictException, Injectable, Logger, NotFoundException } from '@nestj
 import { MedicRepository } from './medic.repository';
 import { Medic, User } from '@prisma/client';
 import { CreateUserDTO } from 'src/user/dto/user.dto';
-import { CreateMedicDTO, MedicList } from './dto/medic.dto';
+import { CreateMedicDTO } from './dto/medic.dto';
 import bcrypt from 'bcryptjs'
 import { UserService } from 'src/user/user.service';
 
@@ -11,27 +11,23 @@ export class MedicService {
     constructor(private medicRepository: MedicRepository, private userService: UserService){};
     private readonly logger = new Logger();
 
-    async getMedics(): Promise<MedicList[]>{
+    async getMedics(){
         this.logger.debug(`Listing all medics: `);
 
         const medics = await this.medicRepository.findAll();
+
         this.logger.log(`Medics listed - ${medics.length}`);
+        
         const users = await this.userService.getUsers();
         const usersMap = new Map(users.map(user => [user.id, user.name]));
 
-        const medicList = medics.map(medic => {
-            const name = usersMap.get(medic.userId);
-            return  {
-                name: name!,
-                crm: medic.crm,
-                specialty: medic.specialty
-            }
-        })
-
-        return medicList;
+        return medics.map(medic => ({
+            ...medic,
+            name: usersMap.get(medic.userId)!
+        }));
     }
 
-    async getMedicById(id: number): Promise<MedicList | null>{
+    async getMedicById(id: number){
         this.logger.debug(`Listing medic by id: ${id}`);
 
         const medic = await this.medicRepository.findById(id);
@@ -44,11 +40,7 @@ export class MedicService {
         const userData = await this.userService.getUserById(medic.userId);
 
         this.logger.log(`Medic ${id} listed - CRM ${medic.crm}, SPECIALITY: ${medic.specialty}`);
-        return {
-            name: userData!.name,
-            crm: medic.crm,
-            specialty: medic.specialty
-        };
+        return { ...medic, name: userData!.name }
     }
 
     async getMedicByCRM(crm: string): Promise<Medic | null> {

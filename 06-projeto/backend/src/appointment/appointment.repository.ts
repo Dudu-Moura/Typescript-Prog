@@ -9,7 +9,7 @@ export class AppointmentRepository{
 
     async findAll(id?: number): Promise<Appointment[]>{
         return this.prisma.appointment.findMany({
-            where: { id }
+            where: { userId: id }
         });
     }
 

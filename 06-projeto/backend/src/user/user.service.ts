@@ -61,4 +61,34 @@ export class UserService {
         this.logger.log(`User created - ${createdUser.id, createdUser.email, createdUser.role}`);
         return createdUser;
     }
+
+    async updateUser(email: string, data: Partial<CreateUserDTO>){
+        this.logger.debug(`Updating user - ${email}, field: ${data}`);
+
+        const user = await this.getUserByEmail(email);
+        if(!user){
+            this.logger.warn(`User not found - ${email}`);
+            throw new NotFoundException(`User not found`);
+        }
+
+        if(data.password){
+            const password = await bcrypt.hash(data.password, 10);
+        }
+
+        const updatedUser = await this.UserRepository.update(email, data);
+        this.logger.log(`User updated - ${JSON.stringify(updatedUser)}`);
+
+        return updatedUser;
+    }
+
+    async deleteUser(id: number){
+        this.logger.debug(`Deleting user - ${id}`);
+        const user = await this.UserRepository.delete(id);
+        if(!user){
+            this.logger.warn(`User ${id} not found`);
+            throw new NotFoundException(`User not found`);
+        }
+
+        return this.UserRepository.delete(id);
+    }
 }

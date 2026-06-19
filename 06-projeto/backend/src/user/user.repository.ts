@@ -31,11 +31,12 @@ export class UserRepository{
         });
     };
 
-    async update(data: Partial<User>): Promise<User> {
+    async update(email: string, data: Partial<User>): Promise<User> {
         const user = await this.findByEmail(data.email!);
 
         return await this.prisma.user.update({
-            data: { ...user, data } 
+            where: { email },
+            data
         })
     }
 

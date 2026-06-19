@@ -7,7 +7,7 @@ import { CreateUserDTO } from "src/user/dto/user.dto";
 
 @Injectable()
 export class MedicRepository{
-    constructor(private prisma: PrismaService, private userRepo: UserRepository){};
+    constructor(private prisma: PrismaService){};
 
     async findAll(): Promise<Medic[]>{
         return this.prisma.medic.findMany();
