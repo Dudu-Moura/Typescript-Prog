@@ -39,8 +39,8 @@ export class AppointmentController {
   }
 
   @Get(':id')
-  async getAppointmentById(@Param('id') id: string): Promise<AppointmentSummary>{
-    const appointment = await this.appointmentService.getAppointmentById(Number(id));
+  async getAppointmentById(@CurrentUser() user: User, @Param('id') id: string): Promise<AppointmentSummary>{
+    const appointment = await this.appointmentService.getAppointmentById(Number(id), user.id, user.role);
     return {
       scheduledDate: appointment.scheduledAt.getDay(),
       scheduledHour: appointment.scheduledAt.getHours(),
@@ -51,17 +51,17 @@ export class AppointmentController {
   }
 
   @Post()
-  async createAppointment(@Body() appointment: CreateAppointmentDTO, @CurrentUser() user: User, @Body('crm') crm: string){
-    return this.appointmentService.createAppointment(appointment, user.email, crm);
+  async createAppointment(@Body() appointment: CreateAppointmentDTO, @CurrentUser() user: User){
+    return this.appointmentService.createAppointment(appointment, user.email, appointment.crm);
   }
 
   @Patch(':id')
-  async updateAppointmentStatus(@Param('id') id: string, @Body('status') status: AppointmentStatus){
-    return this.appointmentService.updateStatus(Number(id), status);
+  async updateAppointmentStatus(@Param('id') id: string, @Body('status') status: AppointmentStatus, @CurrentUser() user: User){
+    return this.appointmentService.updateStatus(Number(id), status, user.role, user.id);
   }
 
-  @Patch(':id')
-  async cancelAppointment(@Param('id') id: string){
-    return this.appointmentService.cancelAppointment(Number(id));
+  @Patch(':id/cancel')
+  async cancelAppointment(@Param('id') id: string, @CurrentUser() user: User){
+    return this.appointmentService.cancelAppointment(Number(id), user.role, user.id);
   }
 }

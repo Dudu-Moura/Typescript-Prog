@@ -12,18 +12,24 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
+  @Roles('ADMIN')
   async getUsers(){
-    return this.userService.getUsers();
+    const users = await this.userService.getUsers();
+    return users.map(user => ({
+      name: user.name,
+      cpf: user.cpf,
+      email: user.email
+    }));
   }
 
   @Get(':id')
   async getUserId(@Param('id') id: string){
-    return this.userService.getUserById(Number(id));
-  }
-
-  @Post()
-  async create(@Body() data: CreateUserDTO){
-    return this.userService.createUser(data);
+    const user = await this.userService.getUserById(Number(id));
+    return {
+      name: user!.name,
+      cpf: user!.cpf,
+      email: user!.email
+    }
   }
 
   @Patch()

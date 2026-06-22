@@ -53,6 +53,16 @@ export class MedicService {
         return medic;
     }
 
+    async getMedicByUser(id: number): Promise<Medic | null>{
+        const medic = await this.medicRepository.findByUser(id);
+
+        if(!medic){
+            throw new NotFoundException(`Medic not found`);
+        }
+
+        return medic;
+    }
+
     async createMedic(userData: CreateUserDTO, medicData: CreateMedicDTO): Promise<{user: User, medic: Medic}>{
         this.logger.debug(`Creating medic - ${medicData.crm}, ${userData.email}`);
 

@@ -1,5 +1,5 @@
 import { UserService } from "src/user/user.service";
-import { LoginDTO } from "./dto/auth.dto";
+import { LoginDTO, RegisterDTO } from "./dto/auth.dto";
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDTO } from "src/user/dto/user.dto";
@@ -12,10 +12,10 @@ export class AuthService{
     constructor(private userService: UserService, private medicService: MedicService,private jwtService: JwtService){};
     private readonly logger = new Logger();
 
-    async register(data: CreateUserDTO): Promise<{ token: string }> {
-        this.logger.debug(`Register attempt - EMAIL: ${data.email} NAME: ${data.name}`);
+    async register(data: RegisterDTO): Promise<{ token: string }> {
+        this.logger.debug(`Register attempt - EMAIL: ${data.user.email} NAME: ${data.user.name}`);
 
-        const user = await this.userService.createUser(data);
+        const user = await this.userService.createUser(data.user);
         const payload = { id: user.id, role: user.role, email: user.email}
 
         const token = await this.jwtService.sign(payload);
@@ -23,11 +23,11 @@ export class AuthService{
         return { token }
     };
 
-    async registerMedic(userData: CreateUserDTO, medicData: CreateMedicDTO): Promise<{ token: string }> {
-        this.logger.debug(`Medic register attempt - EMAIL: ${userData.email} NAME: ${userData.name} CRM: ${medicData.crm}`);
+    async registerMedic(data: RegisterDTO): Promise<{ token: string }> {
+        this.logger.debug(`Medic register attempt - EMAIL: ${data.user.email} NAME: ${data.user.name} CRM: ${data.medic!.crm}`);
 
-        const {user, medic} = await this.medicService.createMedic(userData, medicData);
-        const payload = { id: user.id, role: user.role, email: user.email };
+        const {user, medic} = await this.medicService.createMedic(data.user, data.medic!);
+        const payload = { id: user.id, role: user.role, email: user.email, medicId: medic.id };
 
         const token = await this.jwtService.sign(payload);
         this.logger.log(`Token generated - ${token}`);
@@ -43,7 +43,7 @@ export class AuthService{
         const userPassword = await bcrypt.compare(data.password, user.password);
         if(!userPassword) throw new UnauthorizedException(`Email or password incorrect`);
 
-        const payload = { id: user.id, role: user.role, email: user.email};
+        const payload = { id: user.id, role: user.role, email: user.email };
         const token = await this.jwtService.sign(payload);
         this.logger.log(`Token generated - ${token}`);
         return { token }

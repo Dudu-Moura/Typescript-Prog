@@ -25,9 +25,15 @@ export class MedicRepository{
         });
     }
 
+    async findByUser(id: number): Promise<Medic | null>{
+        return this.prisma.medic.findUnique({
+            where: { userId: id }
+        })
+    }
+
     async create(userData: CreateUserDTO, medicData: CreateMedicDTO): Promise<{user: User, medic: Medic}>{
         const user = await this.prisma.user.create({
-            data: userData
+            data: {...userData, role: 'MEDIC'},
         });
 
         const userId = user.id;

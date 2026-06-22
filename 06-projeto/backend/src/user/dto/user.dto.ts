@@ -1,5 +1,6 @@
 import { IsEmail, IsString, Length, Matches, MinLength} from 'class-validator'
 import { PartialType } from '@nestjs/mapped-types'
+import { User } from '@prisma/client'
 
 export class CreateUserDTO {
     @IsString()
@@ -20,3 +21,5 @@ export class CreateUserDTO {
 }
 
 export class UpdateUserDTO extends PartialType(CreateUserDTO){};
+
+export type SafeUser = Omit<User, 'password'>

@@ -9,13 +9,16 @@ import { Roles } from "src/auth/guards/role.guard";
 export class UserRepository{
     constructor(private prisma: PrismaService){};
 
-    async findAll(): Promise<User[]>{
-        return this.prisma.user.findMany();
+    async findAll(){
+        return this.prisma.user.findMany({
+            omit: { password: true }
+        });
     };
 
-    async findById(id: number): Promise<User | null>{
+    async findById(id: number){
         return this.prisma.user.findUnique({
-            where: { id }
+            where: { id },
+            omit: { password: true }
         });
     };
 
@@ -32,8 +35,6 @@ export class UserRepository{
     };
 
     async update(email: string, data: Partial<User>): Promise<User> {
-        const user = await this.findByEmail(data.email!);
-
         return await this.prisma.user.update({
             where: { email },
             data

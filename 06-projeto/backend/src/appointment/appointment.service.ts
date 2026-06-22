@@ -1,7 +1,7 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { AppointmentRepository } from './appointment.repository';
-import { Appointment, AppointmentStatus, Medic, Role, User } from '@prisma/client';
-import { AppointmentSummary, CreateAppointmentDTO } from './dto/appointment.dto';
+import { Appointment, AppointmentStatus, Role } from '@prisma/client';
+import { CreateAppointmentDTO } from './dto/appointment.dto';
 import { UserService } from 'src/user/user.service';
 import { MedicService } from 'src/medic/medic.service';
 
@@ -17,6 +17,25 @@ const VALID_TRANSITIONS: Record<AppointmentStatus, AppointmentStatus[] | null> =
 export class AppointmentService {
     constructor(private appointmentRepository: AppointmentRepository, private userService: UserService, private medicService: MedicService){};
     private readonly logger = new Logger();
+
+    private async assertOwnership(userRole: Role, userId: number, appointment: Appointment){
+        if(userRole == 'ADMIN') return;
+
+        if(userRole == 'PATIENT'){
+            if(appointment.userId != userId){
+                throw new ForbiddenException(`Appointment does not belong to ${userId}`)
+            }
+            return;
+        }
+
+        if(userRole == 'MEDIC'){
+            const medic = await this.medicService.getMedicByUser(userId);
+            if(appointment.medicId != medic?.id){
+                throw new ForbiddenException(`Appointment does not belong to ${userId}`);
+            }
+            return;
+        }
+    }
 
     async getAllAppointments(){
         this.logger.debug(`Listing all appointments`);
@@ -55,7 +74,7 @@ export class AppointmentService {
         }));
     }
 
-    async getAppointmentById(id: number){
+    async getAppointmentById(id: number, userId: number, userRole: Role){
         this.logger.debug(`Getting appointment - ${id}`);
         const appointment = await this.appointmentRepository.findById(id);
 
@@ -63,7 +82,9 @@ export class AppointmentService {
             this.logger.warn(`Appointment not found - ${id}`);
             throw new NotFoundException(`Appointment not found`);
         }
-
+        
+        await this.assertOwnership(userRole, userId, appointment);
+        
         const medic = await this.medicService.getMedicById(appointment.medicId);
 
         this.logger.log(`Appointment found - ${appointment.id}, ${appointment.status}`);
@@ -91,21 +112,28 @@ export class AppointmentService {
 
         const medicAppointments = await this.appointmentRepository.findByMedic(medicId!);
 
-        const sameHourAppointment = medicAppointments.find(appointment => appointmentData.scheduledAt >= appointment.scheduledAt && appointmentData.scheduledAt.getMinutes() < appointment.scheduledAt.getMinutes() + 30 )
+        const sameHourAppointment = medicAppointments.find(appointment =>
+         appointment.status !== 'CANCELLED' &&
+         Math.abs(appointmentData.scheduledAt.getTime() - appointment.scheduledAt.getTime()) < 30 * 60 * 1000
+        );
+
         if(sameHourAppointment){
             this.logger.warn(`Appointment in the same date:time period - ${appointmentData.scheduledAt} - ${sameHourAppointment}`);
             throw new ConflictException(`There is already an appointment  at this time period`);
         }
+
         const appointment = await this.appointmentRepository.create(appointmentData, userId!, medicId!);
         return appointment;
     }
 
-    async updateStatus(id: number, newStatus: AppointmentStatus): Promise<Appointment>{
+    async updateStatus(id: number, newStatus: AppointmentStatus, userRole: Role, userId: number): Promise<Appointment>{
         const appointment = await this.appointmentRepository.findById(id);
 
         if(!appointment){
             throw new NotFoundException(`Appointment not found`);
         }
+
+        await this.assertOwnership(userRole, userId, appointment);
 
         const allowed = VALID_TRANSITIONS[appointment.status];
         if(!allowed || !allowed.includes(newStatus)){
@@ -116,12 +144,14 @@ export class AppointmentService {
         return this.appointmentRepository.updateStatus(id, newStatus);
     }
 
-    async cancelAppointment(id: number): Promise<Appointment>{
+    async cancelAppointment(id: number, userRole: Role, userId: number): Promise<Appointment>{
         const appointment = await this.appointmentRepository.findById(id);
 
         if(!appointment){
             throw new NotFoundException(`Appointment not found`);
         }
+
+        await this.assertOwnership(userRole, userId, appointment);
 
         const allowedTransaction = VALID_TRANSITIONS[appointment.status];
         if(!allowedTransaction){
