@@ -17,20 +17,26 @@ export class AppointmentController {
     if(user.role == 'PATIENT'){ 
       const patientAppointments = await this.appointmentService.getPatientAppointments(user.id);
       return patientAppointments.map(appointment => ({
+        id: appointment.id,
+        scheduledAt: appointment.scheduledAt,
         scheduledDate: appointment.scheduledAt.getDay(),
         scheduledHour: appointment.scheduledAt.getHours(),
         status: appointment.status,
+        notes: appointment.notes,
         medicName: appointment.medicName,
         medicSpecialty: appointment.medicSpecialty
       }));
-    } 
-     
+    }
+
     if(user.role == 'MEDIC') {
       const medicAppointments = await this.appointmentService.getMedicAppointments(user.id);
       return medicAppointments.map(appointment => ({
+        id: appointment.id,
+        scheduledAt: appointment.scheduledAt,
         scheduledDate: appointment.scheduledAt.getDay(),
         scheduledHour: appointment.scheduledAt.getHours(),
         status: appointment.status,
+        notes: appointment.notes,
         patientName: appointment.patientName
       }))
     };

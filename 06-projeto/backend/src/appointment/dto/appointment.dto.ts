@@ -1,14 +1,13 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { AppointmentStatus } from "@prisma/client";
+import { Type } from "class-transformer";
 import { IsDate, IsEnum, IsString, MinLength } from "class-validator";
 
 //Input
 export class CreateAppointmentDTO{
     @IsDate()
+    @Type(() => Date)
     scheduledAt!: Date
-
-    @IsEnum(AppointmentStatus)
-    status!: AppointmentStatus
 
     @IsString()
     @MinLength(5)

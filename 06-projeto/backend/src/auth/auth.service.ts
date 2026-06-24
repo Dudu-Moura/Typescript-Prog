@@ -6,6 +6,7 @@ import { CreateUserDTO } from "src/user/dto/user.dto";
 import bcrypt from "bcryptjs";
 import { CreateMedicDTO } from "src/medic/dto/medic.dto";
 import { MedicService } from "src/medic/medic.service";
+import { Medic } from "@prisma/client";
 
 @Injectable()
 export class AuthService{
@@ -19,19 +20,19 @@ export class AuthService{
         const payload = { id: user.id, role: user.role, email: user.email}
 
         const token = await this.jwtService.sign(payload);
-        this.logger.log(`Token generated - ${token}`);
+        this.logger.log(`Token generated`);
         return { token }
     };
 
-    async registerMedic(data: RegisterDTO): Promise<{ token: string }> {
+    async registerMedic(data: RegisterDTO): Promise<Medic> {
         this.logger.debug(`Medic register attempt - EMAIL: ${data.user.email} NAME: ${data.user.name} CRM: ${data.medic!.crm}`);
 
         const {user, medic} = await this.medicService.createMedic(data.user, data.medic!);
         const payload = { id: user.id, role: user.role, email: user.email, medicId: medic.id };
 
         const token = await this.jwtService.sign(payload);
-        this.logger.log(`Token generated - ${token}`);
-        return { token }
+        this.logger.log(`Token generated`);
+        return medic;
     };
 
     async login(data: LoginDTO): Promise<{ token: string }>{
@@ -45,7 +46,7 @@ export class AuthService{
 
         const payload = { id: user.id, role: user.role, email: user.email };
         const token = await this.jwtService.sign(payload);
-        this.logger.log(`Token generated - ${token}`);
+        this.logger.log(`Token generated`);
         return { token }
     };
 }   

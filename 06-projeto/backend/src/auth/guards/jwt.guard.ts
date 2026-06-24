@@ -10,7 +10,7 @@ export class JwtGuard extends AuthGuard('jwt'){
 
     handleRequest<TUser = any>(err: any, user: any, info: any, context: ExecutionContext, status?: any): TUser {
         const error = err || info;
-        if(!error || !user){
+        if(error || !user){
             throw new UnauthorizedException(`Token inválido ou expirado`);
         }
         return user;

@@ -68,7 +68,7 @@ export class UserService {
         }
 
         if(data.password){
-            const password = await bcrypt.hash(data.password, 10);
+            data.password = await bcrypt.hash(data.password, 10);
         }
         
         const updatedUser = await this.UserRepository.update(email, data);
@@ -79,7 +79,7 @@ export class UserService {
 
     async deleteUser(id: number){
         this.logger.debug(`Deleting user - ${id}`);
-        const user = await this.UserRepository.delete(id);
+        const user = await this.UserRepository.findById(id);
         if(!user){
             this.logger.warn(`User ${id} not found`);
             throw new NotFoundException(`User not found`);

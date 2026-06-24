@@ -4,6 +4,7 @@ import { CreateUserDTO } from 'src/user/dto/user.dto';
 import { CreateMedicDTO, MedicList } from './dto/medic.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Roles, RolesGuard } from 'src/auth/guards/role.guard';
+import { RegisterDTO } from 'src/auth/dto/auth.dto';
 
 @Controller('medic')
 @UseGuards(JwtGuard, RolesGuard)
@@ -25,10 +26,5 @@ export class MedicController {
     const medic = await this.medicService.getMedicById(Number(id));
     return { name: medic.name, crm: medic.crm, specialty: medic.specialty };
   }
-
-  @Post()
-  @Roles('ADMIN')
-  async createMedic(@Body() userData: CreateUserDTO, medicData: CreateMedicDTO){
-    return this.medicService.createMedic(userData, medicData);
-  }
+  
 }

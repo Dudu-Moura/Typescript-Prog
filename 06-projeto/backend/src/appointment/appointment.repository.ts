@@ -26,8 +26,10 @@ export class AppointmentRepository{
     }
 
     async create(appointment: CreateAppointmentDTO, userId: number, medicId: number): Promise<Appointment>{
+        const { crm, ...appointmentData } = appointment;
+        void crm;
         return this.prisma.appointment.create({
-            data: {...appointment, userId, medicId}
+            data: {...appointmentData, userId, medicId}
         });
     }
 
