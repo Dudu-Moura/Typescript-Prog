@@ -1,0 +1,26 @@
+server {
+    listen       ${PORT};
+    listen       [::]:${PORT};
+    server_name  _;
+
+    root   /usr/share/nginx/html;
+    index  index.html;
+
+    # Compressão dos assets de texto.
+    gzip            on;
+    gzip_types      text/css application/javascript application/json image/svg+xml;
+    gzip_min_length 1024;
+
+    # Assets versionados (hash no nome) podem ser cacheados agressivamente.
+    location /assets/ {
+        expires    1y;
+        add_header Cache-Control "public, immutable";
+        try_files  $uri =404;
+    }
+
+    # Fallback de SPA: qualquer rota desconhecida cai no index.html
+    # para o React Router resolver no cliente.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

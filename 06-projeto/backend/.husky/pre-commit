@@ -1,1 +1,4 @@
+# lint-staged precisa rodar a partir de backend/ para achar o config
+# e as dependencias (eslint/prettier), ja que o repo git fica acima.
+cd "$(dirname "$0")/.." || exit 1
 npx lint-staged

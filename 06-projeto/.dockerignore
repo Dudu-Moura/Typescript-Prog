@@ -1,0 +1,23 @@
+# Dependências e build (reinstalados/recompilados dentro da imagem)
+**/node_modules
+**/dist
+**/build
+**/coverage
+
+# Segredos — nunca entram na imagem
+**/.env
+**/.env.*
+
+# Git / CI / metadados
+.git
+.gitignore
+**/.husky
+**/*.md
+
+# Frontend (não faz parte desta imagem do backend)
+frontend
+
+# Tooling / editores
+.vscode
+.idea
+**/*.log

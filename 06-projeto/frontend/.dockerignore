@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+.git
+.gitignore
+# .env é ignorado de propósito: a URL da API entra via --build-arg VITE_API_URL,
+# evitando que um .env local sobrescreva o valor do build de produção.
+.env
+*.local
+Dockerfile
+.dockerignore
+README.md

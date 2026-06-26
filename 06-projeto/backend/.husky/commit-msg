@@ -1,1 +1,11 @@
-npx --no -- commitlint --edit $1
+# O repositorio git fica acima de backend/, mas o commitlint e suas
+# dependencias estao em backend/. Resolvemos o caminho do arquivo de
+# mensagem (relativo a raiz do git) antes de entrar em backend/.
+MSG_FILE="$1"
+case "$MSG_FILE" in
+  /*) ;;
+  *) MSG_FILE="$(pwd)/$MSG_FILE" ;;
+esac
+
+cd "$(dirname "$0")/.." || exit 1
+npx --no -- commitlint --edit "$MSG_FILE"
