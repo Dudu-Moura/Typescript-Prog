@@ -11,7 +11,7 @@ RUN apk add --no-cache openssl
 
 # Copiamos só os manifestos primeiro: enquanto eles não mudam, o Docker
 # reaproveita a camada de cache e não reinstala tudo a cada build.
-COPY /package.json backend/package-lock.json ./
+COPY package.json package-lock.json ./
 # Ignora o "prepare" (husky) — não faz sentido dentro do container.
 RUN npm ci --ignore-scripts
 
@@ -23,7 +23,7 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY  ../
+COPY . .
 
 # Gera o Prisma Client para o target do Alpine e compila (dist/).
 RUN npx prisma generate \

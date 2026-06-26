@@ -1,0 +1,23 @@
+# Dependências e build (reinstalados/recompilados dentro da imagem)
+node_modules
+dist
+build
+coverage
+
+# Segredos — nunca entram na imagem
+.env
+.env.*
+
+# Git / CI / metadados / tooling
+.git
+.gitignore
+.husky
+*.md
+.vscode
+.idea
+*.log
+
+# Não precisamos do próprio Docker dentro da imagem
+Dockerfile
+.dockerignore
+docker-compose.yml
