@@ -23,7 +23,7 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY  ./
+COPY  ../
 
 # Gera o Prisma Client para o target do Alpine e compila (dist/).
 RUN npx prisma generate \
